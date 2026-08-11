@@ -123,14 +123,16 @@ Google cobra solo por la IP.
 
 ### Instalar
 
-Edita `vm-config.cmd` con la IP, el usuario y la llave de la maquina nueva, y:
+Copia `vm-config.cmd.example` a `vm-config.cmd`, pon ahi la IP, el usuario y la
+llave de la maquina nueva, y:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\subir-a-vm.ps1 -VmIp 1.2.3.4 -VmUser ubuntu -VmKey "$env:USERPROFILE\.ssh\tu_llave"
 ```
 
-Copia el codigo, corre `vm/install.sh` y deja el temporizador andando. Todo lo
-demas (`ver-corridas.cmd`, `revisar-ahora.cmd`, `conectar-vm.cmd`) sigue igual.
+Copia el codigo, corre `vm/install.sh` y deja el temporizador andando. A partir
+de ahi la maquina se maneja por SSH; los comandos estan al final de
+[COMANDOS.md](COMANDOS.md).
 
 Antes de la primera corrida, la clave nueva va en la VM:
 

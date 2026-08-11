@@ -59,16 +59,6 @@ Copia el codigo a la VM y ejecuta `vm/install.sh`, que:
 Las revisiones caen en **hora cerrada**: 2:00, 2:30, 3:00, 3:30… El temporizador
 va sin desfase aleatorio y con precision de un segundo.
 
-## Atajos de esta carpeta (doble clic)
-
-| Archivo | Para que |
-|---|---|
-| `ver-corridas.cmd` | resumen: proxima revision, como fue cada una, cuantas van |
-| `ver-corridas.cmd seguir` | el registro en vivo |
-| `revisar-ahora.cmd` | fuerza una revision ya, sin esperar al temporizador |
-| `conectar-vm.cmd` | abre una consola dentro de la VM |
-| `vm-config.cmd` | la IP, el usuario y la llave — se edita aqui y ya |
-
 La lista completa de comandos esta en [COMANDOS.md](COMANDOS.md).
 
 ### Que garantiza que no se lleve la maquina por delante

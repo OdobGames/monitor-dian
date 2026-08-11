@@ -1,0 +1,8 @@
+@echo off
+rem Datos de la VM, solo si usas la Ruta B de MIGRAR.md (maquina propia).
+rem
+rem Copia este archivo como  vm-config.cmd  y pon los datos reales. El original
+rem no sube al repositorio: lleva la IP y la ruta de tu llave SSH.
+set "VM_IP=CAMBIAR.POR.LA.IP"
+set "VM_USER=ubuntu"
+set "VM_KEY=%USERPROFILE%\.ssh\dian.key"
