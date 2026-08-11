@@ -1,0 +1,47 @@
+[Unit]
+Description=Monitor de citas DIAN (una revision)
+Documentation=file:/opt/dian/LEEME.md
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=dian
+Group=dian
+WorkingDirectory=/opt/dian
+EnvironmentFile=/opt/dian/dian.env
+Environment=PLAYWRIGHT_BROWSERS_PATH=/opt/dian/browsers
+Environment=TZ=America/Bogota
+ExecStart=/opt/dian/venv/bin/python /opt/dian/check_dian_v5.py --una-vez --respetar-horario
+
+# Topes pensados para una maquina chica (e2-micro de Google: 1 vCPU compartido,
+# 1 GB de RAM). El instalador crea 2 GB de intercambio, asi que un pico de
+# Chromium no tumba la maquina, pero el tope duro sigue estando aqui: si se
+# desboca, muere el grupo entero — hijos incluidos, sin procesos zombis.
+Nice=10
+IOWeight=50
+IOSchedulingClass=idle
+MemoryHigh=600M
+MemoryMax=850M
+TasksMax=200
+RuntimeMaxSec=600
+TimeoutStopSec=30
+KillMode=control-group
+
+# Aislamiento: /tmp propio (se borra solo al terminar, asi Chromium no puede
+# dejar basura), sin acceso a /home ni escritura fuera de su carpeta.
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/opt/dian
+NoNewPrivileges=yes
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+
+# 0 = hay cupos, 1 = sin cupos, 2 = error de la pagina, 3 = fuera de horario.
+# Ninguno de esos es un fallo del servicio.
+SuccessExitStatus=0 1 2 3
+
+[Install]
+WantedBy=multi-user.target

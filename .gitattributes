@@ -1,0 +1,20 @@
+# Windows guarda los saltos de linea como CRLF. Linux no los traga: un script
+# de bash con CRLF falla con "$'\r': command not found", y un paso `run:` de
+# GitHub Actions, igual. Estos archivos van a Linux, asi que se guardan y se
+# sacan siempre con LF, sin importar el sistema.
+*.sh        text eol=lf
+*.yml       text eol=lf
+*.yaml      text eol=lf
+*.py        text eol=lf
+*.service   text eol=lf
+*.timer     text eol=lf
+*.env       text eol=lf
+*.example   text eol=lf
+
+# Estos solo se usan en Windows.
+*.cmd       text eol=crlf
+*.bat       text eol=crlf
+*.ps1       text eol=crlf
+
+# Binarios: que git no toque nada.
+*.png       binary

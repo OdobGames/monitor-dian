@@ -1,0 +1,17 @@
+[Unit]
+Description=Dispara el monitor de citas DIAN cada 30 minutos
+
+[Timer]
+# En punto y y media, todo el dia: 00:00, 00:30, 01:00, 01:30... El propio
+# script sale sin hacer nada fuera del horario de vigilancia
+# (--respetar-horario), asi que no hace falta afinar aqui.
+OnCalendar=*-*-* *:00,30:00
+# Sin desfase aleatorio y con precision al segundo: dispara en la hora cerrada.
+RandomizedDelaySec=0
+AccuracySec=1s
+# Si la VM estuvo apagada, no dispara una tanda de revisiones atrasadas.
+Persistent=false
+Unit=dian-monitor.service
+
+[Install]
+WantedBy=timers.target

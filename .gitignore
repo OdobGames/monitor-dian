@@ -1,0 +1,30 @@
+# La configuracion real lleva la clave de aplicacion de Google. NUNCA sube.
+# El ejemplo (vm/dian.env.example) si, que no tiene nada dentro.
+vm/dian.env
+dian.env
+*.env
+!*.env.example
+
+# Este .bat se edita a mano y termina con la clave de aplicacion escrita
+# dentro. Es una herramienta local: no sube nunca.
+subir-a-github.bat
+
+# Datos de la maquina propia: IP, usuario, ruta de la llave SSH.
+vm-config.cmd
+
+# Llaves
+*.key
+*.pem
+id_rsa*
+
+# Salida de las corridas
+monitor.log
+monitor.log.tmp
+salida/
+*.png
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/

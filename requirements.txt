@@ -1,0 +1,3 @@
+# Version fijada a proposito: si no se fija, cada actualizacion se baja un
+# Chromium nuevo y deja el viejo en disco.
+playwright==1.55.0

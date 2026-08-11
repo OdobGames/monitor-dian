@@ -1,0 +1,174 @@
+name: Monitor de citas DIAN
+
+# Corre en los servidores de GitHub: no hace falta VM ni dejar el PC encendido.
+#
+# El horario del cron va en UTC. Colombia es UTC-5 todo el ano (no hay horario
+# de verano), asi que la franja de vigilancia 5:00-21:00 hora de Bogota son las
+# 10:00-01:59 UTC. La ultima revision cae 20:30 en Bogota = 01:30 UTC.
+#
+# Aviso sobre la puntualidad: el cron de GitHub Actions no es exacto. Cuando la
+# cola esta cargada, una corrida puede arrancar entre 5 y 20 minutos tarde, y en
+# picos muy altos GitHub se salta la corrida. Para vigilar cupos que duran
+# minutos, eso es un costo real. Si hace falta puntualidad al segundo, la ruta
+# de la VM (vm/install.sh) sigue disponible.
+
+on:
+  schedule:
+    - cron: "0,30 0-1,10-23 * * *"
+  workflow_dispatch:        # boton "Run workflow" para forzar una revision
+
+# Dos corridas a la vez no aportan nada y gastan minutos.
+concurrency:
+  group: dian-monitor
+  cancel-in-progress: false
+
+permissions:
+  contents: write           # solo lo usa el paso de keepalive
+
+jobs:
+  revisar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10     # equivale al RuntimeMaxSec=600 del servicio systemd
+    env:
+      TZ: America/Bogota    # para que --respetar-horario mire la hora correcta
+      DIAN_CORREO_DESTINO: ${{ secrets.DIAN_CORREO_DESTINO }}
+      DIAN_CORREO_ORIGEN: ${{ secrets.DIAN_CORREO_ORIGEN }}
+      DIAN_CLAVE_APP: ${{ secrets.DIAN_CLAVE_APP }}
+      DIAN_MODALIDAD: videoatencion
+      # La franja ya la impone el cron de arriba, asi que la revision corre sin
+      # --respetar-horario: si le das al boton "Run workflow" a medianoche,
+      # revisa igual. Estas dos solo hacen falta si algun dia le agregas ese
+      # parametro al comando.
+      DIAN_HORA_INICIO: "5"
+      DIAN_HORA_FIN: "21"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Instalar Playwright
+        run: pip install -r requirements.txt
+
+      # Chromium pesa ~314 MB. Sin cache se baja en cada corrida: 32 veces al
+      # dia. La clave lleva la version de Playwright, asi que al subir de
+      # version el cache se invalida solo.
+      - name: Cache de Chromium
+        id: cache-chromium
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: chromium-${{ runner.os }}-${{ hashFiles('requirements.txt') }}
+
+      - name: Bajar Chromium
+        if: steps.cache-chromium.outputs.cache-hit != 'true'
+        run: playwright install --with-deps --only-shell chromium
+
+      # Las librerias del sistema no quedan en el cache: hay que ponerlas
+      # tambien cuando Chromium vino cacheado.
+      - name: Librerias del sistema
+        if: steps.cache-chromium.outputs.cache-hit == 'true'
+        run: playwright install-deps chromium
+
+      - name: Revisar
+        id: revisar
+        run: |
+          set +e
+          python check_dian_v5.py --una-vez
+          codigo=$?
+          set -e
+          echo "codigo=$codigo" >> "$GITHUB_OUTPUT"
+          # 0 = hay cupos, 1 = sin cupos, 2 = error de la pagina, 3 = fuera de
+          # horario. Solo el 2 merece marcar la corrida en rojo; los demas son
+          # resultados normales y no deben llenar el correo de fallos.
+          case $codigo in
+            0) echo "::notice::CUPOS DETECTADOS — revisa el correo" ;;
+            1) echo "sin cupos" ;;
+            3) echo "fuera de horario" ;;
+            *) echo "::error::el monitor no pudo completar la revision (codigo $codigo)"; exit 1 ;;
+          esac
+
+      # En un repositorio publico el almacenamiento de artefactos no se cobra,
+      # asi que se guarda la captura de TODAS las corridas: sirve para ver con
+      # los ojos que el monitor esta mirando la pantalla correcta, no solo para
+      # el dia que haya cupos.
+      - name: Guardar captura
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: captura-${{ github.run_number }}
+          path: salida/*.png
+          retention-days: 7
+          if-no-files-found: ignore
+
+      # Resumen legible en la pagina de la corrida, sin abrir el registro.
+      - name: Resumen
+        if: always()
+        run: |
+          case "${{ steps.revisar.outputs.codigo }}" in
+            0) estado="**HAY CUPOS** — revisa el correo" ;;
+            1) estado="Sin cupos" ;;
+            3) estado="Fuera de horario, no se reviso" ;;
+            *) estado="Error al revisar la pagina" ;;
+          esac
+          {
+            echo "## $estado"
+            echo
+            echo "| | |"
+            echo "|---|---|"
+            echo "| Hora (Bogota) | $(TZ=America/Bogota date '+%Y-%m-%d %H:%M:%S') |"
+            echo "| Modalidad | $DIAN_MODALIDAD |"
+            echo "| Codigo de salida | ${{ steps.revisar.outputs.codigo }} |"
+            echo
+            echo "La captura de la pantalla esta en **Artifacts**, abajo de esta pagina."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # GitHub apaga los workflows programados de un repositorio sin actividad
+      # durante 60 dias. Un commit al mes reinicia ese contador.
+      #
+      # Va ANTES de publicar la captura: el paso siguiente cambia de rama y el
+      # `git push` de aqui iria a la rama equivocada.
+      - name: Keepalive (dia 1 de cada mes)
+        run: |
+          if [ "$(date +%d)" != "01" ]; then exit 0; fi
+          fecha=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          echo "$fecha" > .github/latido
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/latido
+          git diff --staged --quiet || git commit -m "chore: keepalive $fecha"
+          git push
+
+      # Deja la ultima captura en la rama "resultados", que si se puede abrir en
+      # el navegador sin descargar nada:
+      #
+      #   https://github.com/USUARIO/monitor-dian/tree/resultados
+      #
+      # Es una rama huerfana que se reescribe entera en cada publicacion, asi que
+      # no acumula historial. Aun asi cada empujon deja un objeto suelto en el
+      # repositorio, por eso solo publica en hora cerrada (una vez por hora, no
+      # 32 veces al dia) o cuando hay cupos, que ahi si interesa mirar ya.
+      - name: Publicar ultima captura
+        if: steps.revisar.outputs.codigo == '0' || steps.revisar.outputs.codigo == '1'
+        run: |
+          [ -f salida/resultado.png ] || exit 0
+          if [ "${{ steps.revisar.outputs.codigo }}" != "0" ] && [ "$(date +%M)" != "00" ]; then
+            echo "no toca publicar (solo en hora cerrada o si hay cupos)"
+            exit 0
+          fi
+          cp salida/resultado.png /tmp/resultado.png
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan resultados
+          git rm -rf --cached . >/dev/null
+          rm -rf salida
+          mkdir -p ultima
+          cp /tmp/resultado.png ultima/resultado.png
+          printf '# Ultima revision\n\n%s (hora de Bogota)\n\n![resultado](ultima/resultado.png)\n' \
+            "$(TZ=America/Bogota date '+%Y-%m-%d %H:%M:%S')" > README.md
+          git add -A ultima README.md
+          git commit -q -m "Ultima revision"
+          git push -f origin resultados
