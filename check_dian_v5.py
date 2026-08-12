@@ -77,6 +77,17 @@ MAX_SALIDA_MB   = int(os.getenv("DIAN_MAX_SALIDA_MB", "50"))
 URL = "https://agendamiento.dian.gov.co/"
 TEXTO_SIN_CUPOS = "No se encontraron especialidades"
 LLAVE_MODALIDAD = {"presencial": "1", "videoatencion": "2"}
+SEL_AGENDAR = 'div[nombre="btnSolicitarCita"]'
+
+# La pagina de la DIAN se pone lenta a ratos y el tiempo varia mucho de una
+# corrida a otra: medido el 2026-08-12, el HTML inicial tardo entre 52 y 118
+# segundos, y la interfaz aparecio unos 12 segundos despues. Los margenes de
+# abajo dejan holgura sobre el peor caso visto; se pueden subir por entorno sin
+# tocar el codigo.
+TIMEOUT_CARGA_MS  = int(os.getenv("DIAN_TIMEOUT_CARGA_MS", "180000"))
+TIMEOUT_BOTON_MS  = int(os.getenv("DIAN_TIMEOUT_BOTON_MS", "120000"))
+TIMEOUT_CLIC_MS   = int(os.getenv("DIAN_TIMEOUT_CLIC_MS", "45000"))
+INTENTOS_CARGA    = int(os.getenv("DIAN_INTENTOS_CARGA", "2"))
 
 OUT_DIR = Path(__file__).parent / "salida"
 OUT_DIR.mkdir(exist_ok=True)
@@ -274,7 +285,7 @@ def enviar_correo(asunto: str, cuerpo: str, adjunto: Path | None = None) -> bool
 def clic(page, selector: str, etiqueta: str, *, paso="", debug=False, espera=2500):
     log(f"   clic -> {etiqueta}")
     loc = page.locator(selector).first
-    loc.wait_for(state="visible", timeout=25_000)
+    loc.wait_for(state="visible", timeout=TIMEOUT_CLIC_MS)
     loc.scroll_into_view_if_needed()
     page.wait_for_timeout(400)
     loc.click(force=True)
@@ -310,10 +321,25 @@ def revisar_citas(modalidad: str = MODALIDAD, debug: bool = False) -> dict:
             )
             page = ctx.new_page()
 
-            page.goto(URL, wait_until="networkidle", timeout=60_000)
-            page.wait_for_timeout(5000)
+            # No se espera a "networkidle": esa condicion pide 500 ms seguidos
+            # sin trafico de red, y esta pagina no siempre llega a estar quieta.
+            # Basta con el HTML y con que el boton de agendar sea visible; si la
+            # pagina va lenta, se reintenta en vez de dar el dia por perdido.
+            for intento in range(1, INTENTOS_CARGA + 1):
+                try:
+                    page.goto(URL, wait_until="domcontentloaded",
+                              timeout=TIMEOUT_CARGA_MS)
+                    page.wait_for_selector(SEL_AGENDAR, state="visible",
+                                           timeout=TIMEOUT_BOTON_MS)
+                    break
+                except PWTimeout:
+                    if intento == INTENTOS_CARGA:
+                        raise
+                    log(f"   pagina lenta, reintento {intento + 1}/{INTENTOS_CARGA}")
+                    page.wait_for_timeout(5000)
+            page.wait_for_timeout(3000)
 
-            clic(page, 'div[nombre="btnSolicitarCita"]', "Agendar cita",
+            clic(page, SEL_AGENDAR, "Agendar cita",
                  paso="01_agendar", debug=debug, espera=3000)
             clic(page, 'div.btnTipoPersona[llave="1"]', "Persona Natural",
                  paso="02_persona", debug=debug)

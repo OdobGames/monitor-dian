@@ -28,7 +28,9 @@ permissions:
 jobs:
   revisar:
     runs-on: ubuntu-latest
-    timeout-minutes: 10     # equivale al RuntimeMaxSec=600 del servicio systemd
+    # Con la pagina lenta, la carga puede irse a 3 minutos por intento y hay dos
+    # intentos, asi que 10 minutos se quedaban cortos.
+    timeout-minutes: 15
     env:
       TZ: America/Bogota    # para que --respetar-horario mire la hora correcta
       DIAN_CORREO_DESTINO: ${{ secrets.DIAN_CORREO_DESTINO }}
