@@ -28,9 +28,11 @@ permissions:
 jobs:
   revisar:
     runs-on: ubuntu-latest
-    # Con la pagina lenta, la carga puede irse a 3 minutos por intento y hay dos
-    # intentos, asi que 10 minutos se quedaban cortos.
-    timeout-minutes: 15
+    # Con la pagina lenta la corrida entera se va a 7 minutos: la carga puede
+    # tardar 3 por intento (y hay dos), y cada paso espera a que se quite la
+    # cortina de "Cargando". Los 10 minutos de antes se quedaban cortos. En un
+    # repositorio publico los minutos no se cobran, asi que sobra margen.
+    timeout-minutes: 20
     env:
       TZ: America/Bogota    # para que --respetar-horario mire la hora correcta
       DIAN_CORREO_DESTINO: ${{ secrets.DIAN_CORREO_DESTINO }}

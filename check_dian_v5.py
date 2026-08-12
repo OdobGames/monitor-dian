@@ -78,6 +78,9 @@ URL = "https://agendamiento.dian.gov.co/"
 TEXTO_SIN_CUPOS = "No se encontraron especialidades"
 LLAVE_MODALIDAD = {"presencial": "1", "videoatencion": "2"}
 SEL_AGENDAR = 'div[nombre="btnSolicitarCita"]'
+# Cortina negra con la palabra "Cargando" que la pagina pone encima mientras
+# consulta. Mientras este visible, lo que se lea en pantalla no vale nada.
+SEL_CARGANDO = "#mpcWPdivCargando"
 
 # La pagina de la DIAN se pone lenta a ratos y el tiempo varia mucho de una
 # corrida a otra: medido el 2026-08-12, el HTML inicial tardo entre 52 y 118
@@ -87,7 +90,12 @@ SEL_AGENDAR = 'div[nombre="btnSolicitarCita"]'
 TIMEOUT_CARGA_MS  = int(os.getenv("DIAN_TIMEOUT_CARGA_MS", "180000"))
 TIMEOUT_BOTON_MS  = int(os.getenv("DIAN_TIMEOUT_BOTON_MS", "120000"))
 TIMEOUT_CLIC_MS   = int(os.getenv("DIAN_TIMEOUT_CLIC_MS", "45000"))
+TIMEOUT_CARGANDO_MS = int(os.getenv("DIAN_TIMEOUT_CARGANDO_MS", "150000"))
 INTENTOS_CARGA    = int(os.getenv("DIAN_INTENTOS_CARGA", "2"))
+# Margen de gracia tras irse la cortina: la respuesta ya llego, pero el modal
+# tarda un instante en pintarse. Si en este plazo no aparece el aviso de "sin
+# cupos", es que de verdad no lo hay.
+ESPERA_MODAL_MS   = int(os.getenv("DIAN_ESPERA_MODAL_MS", "15000"))
 
 OUT_DIR = Path(__file__).parent / "salida"
 OUT_DIR.mkdir(exist_ok=True)
@@ -282,6 +290,18 @@ def enviar_correo(asunto: str, cuerpo: str, adjunto: Path | None = None) -> bool
 # ──────────────────────────────────────────────────────────────────
 # NAVEGACION
 # ──────────────────────────────────────────────────────────────────
+def esperar_sin_cortina(page) -> None:
+    """Espera a que se vaya la cortina de 'Cargando'.
+
+    Es la diferencia entre leer la pantalla y leer una pantalla a medio pintar:
+    con la cortina puesta no esta el aviso de "sin cupos" todavia, y el monitor
+    lo tomaria por un cupo libre. Si la cortina no se va, revienta con
+    PWTimeout, que arriba se traduce en error — nunca en falsa alarma.
+    """
+    page.wait_for_selector(SEL_CARGANDO, state="hidden",
+                           timeout=TIMEOUT_CARGANDO_MS)
+
+
 def clic(page, selector: str, etiqueta: str, *, paso="", debug=False, espera=2500):
     log(f"   clic -> {etiqueta}")
     loc = page.locator(selector).first
@@ -289,6 +309,8 @@ def clic(page, selector: str, etiqueta: str, *, paso="", debug=False, espera=250
     loc.scroll_into_view_if_needed()
     page.wait_for_timeout(400)
     loc.click(force=True)
+    page.wait_for_timeout(600)
+    esperar_sin_cortina(page)
     page.wait_for_timeout(espera)
     if paso and debug:
         page.screenshot(path=str(OUT_DIR / f"{paso}.png"), full_page=True)
@@ -350,7 +372,17 @@ def revisar_citas(modalidad: str = MODALIDAD, debug: bool = False) -> dict:
             if page.locator(sel_dev).count() == 0:
                 sel_dev = 'div.btnCategoria:has-text("Devoluciones")'
             clic(page, sel_dev, "Devoluciones",
-                 paso="04_devoluciones", debug=debug, espera=4500)
+                 paso="04_devoluciones", debug=debug, espera=2000)
+
+            # Ultimo filtro contra la falsa alarma: la cortina ya se fue, pero
+            # el modal se pinta un instante despues. Se le da un plazo a que
+            # aparezca; solo si pasado ese plazo sigue sin estar cuenta como
+            # cupo libre.
+            try:
+                page.wait_for_selector(f"text={TEXTO_SIN_CUPOS}",
+                                       state="visible", timeout=ESPERA_MODAL_MS)
+            except PWTimeout:
+                pass
 
             page.screenshot(path=str(captura_final), full_page=True)
             cuerpo = page.inner_text("body")
