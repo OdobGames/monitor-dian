@@ -874,8 +874,15 @@ def vigilar(*, duracion_min: int | None = None, salir_fuera_horario: bool = Fals
             if salir_fuera_horario:
                 log(f"Fuera de horario ({datetime.now().hour}:00), fin de esta tanda")
                 break
-            log(f"Fuera de horario ({datetime.now().hour}:00), en espera")
-            time.sleep(min(600, max(1, queda_seg())))
+            # Duerme en tramos de 10 min, pero despierta justo a la hora de
+            # inicio para que la primera revision del dia no llegue tarde.
+            ahora = datetime.now()
+            inicio_hoy = ahora.replace(hour=HORA_INICIO, minute=0, second=5, microsecond=0)
+            hasta_inicio = (inicio_hoy - ahora).total_seconds()
+            if hasta_inicio <= 0:
+                hasta_inicio = hasta_inicio + 86400
+            log(f"Fuera de horario ({ahora.hour}:00), en espera")
+            time.sleep(min(600, max(1, hasta_inicio), max(1, queda_seg())))
             continue
         # Una revision lenta tarda hasta ~10 min: no se empieza si no alcanza.
         if queda_seg() < 12 * 60:

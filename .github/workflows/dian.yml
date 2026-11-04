@@ -1,21 +1,23 @@
 name: Monitor de citas DIAN
 
-# v6. Cada corrida vigila en bucle, una revision cada ~3 minutos, durante casi
-# 6 horas (el maximo que GitHub deja a un job). El cron solo la relanza: con el
-# grupo de concurrencia, la corrida siguiente queda en cola y arranca apenas
-# termina la anterior. Asi la vigilancia es continua dentro del horario y ya no
-# depende de que el cron de GitHub sea puntual (que no lo es).
+# v6.1. Cada corrida vigila en bucle (una revision cada ~3 minutos entre las
+# 5:00 y las 21:00 de Bogota; de noche solo espera) durante casi 6 horas, el
+# maximo que GitHub deja a un job. Al terminar, se relanza ella misma. Asi la
+# vigilancia es continua y NO depende del cron de GitHub, que en este
+# repositorio no estaba disparando.
 #
-# El cron va en UTC. Colombia es UTC-5 todo el ano: la franja 5:00-21:00 de
-# Bogota son las 10:00-02:00 UTC. Fuera de la franja el script sale solo.
+# El cron queda solo de respaldo: si la cadena se corta (una caida de GitHub,
+# por ejemplo) la vuelve a arrancar en la hora siguiente. Va en UTC.
 #
-# Mientras haya una corrida activa, las que lanza el cron quedan en cola y
-# GitHub cancela las que sobran: ver corridas "canceladas" en la pestana
-# Actions es normal.
+# Para apagarlo: cancelar la corrida en curso (una corrida cancelada no se
+# relanza) o desactivar el workflow en la pestana Actions.
+#
+# Las corridas "canceladas" que aparezcan solas son las que el cron mete en cola
+# mientras hay otra activa: es normal.
 
 on:
   schedule:
-    - cron: "7 0-1,10-23 * * *"
+    - cron: "8 * * * *"
   workflow_dispatch:        # boton "Run workflow" para arrancar ya
     inputs:
       probar_avisos:
@@ -29,6 +31,7 @@ concurrency:
 
 permissions:
   contents: write           # keepalive y rama "resultados"
+  actions: write            # para relanzarse al terminar
 
 jobs:
   vigilar:
@@ -55,6 +58,9 @@ jobs:
       DIAN_CLAVE_APP: ${{ secrets.DIAN_CLAVE_APP }}
 
     steps:
+      - name: Marca de inicio
+        run: echo "INICIO_EPOCH=$(date +%s)" >> "$GITHUB_ENV"
+
       - uses: actions/checkout@v4
 
       - uses: actions/setup-python@v5
@@ -91,7 +97,7 @@ jobs:
         if: ${{ !inputs.probar_avisos }}
         run: |
           set +e
-          python check_dian_v5.py --vigilar --duracion-min 340 --respetar-horario
+          python check_dian_v5.py --vigilar --duracion-min 340
           codigo=$?
           set -e
           echo "codigo=$codigo" >> "$GITHUB_OUTPUT"
@@ -167,3 +173,25 @@ jobs:
           git add -f ultima/resultado.png README.md
           git commit -q -m "Ultima revision"
           git push -f origin resultados
+
+      # Se relanza al terminar. Con el grupo de concurrencia, la corrida nueva
+      # queda en cola y arranca apenas esta termina. GitHub si permite que el
+      # GITHUB_TOKEN dispare workflow_dispatch (es la excepcion a la regla de
+      # que el token no dispara workflows).
+      #
+      # No se relanza si: la corrida fue cancelada (asi se apaga), fue solo una
+      # prueba de avisos, o duro menos de 20 minutos (algo fallo al arrancar; se
+      # deja al cron de respaldo para no entrar en un bucle de fallos).
+      - name: Relanzar
+        if: ${{ !cancelled() && !inputs.probar_avisos }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          duro=$(( $(date +%s) - INICIO_EPOCH ))
+          if [ "$duro" -lt 1200 ]; then
+            echo "::warning::duro solo ${duro}s; no se relanza (lo retoma el cron de respaldo)"
+            exit 0
+          fi
+          gh api -X POST "repos/${{ github.repository }}/actions/workflows/dian.yml/dispatches" \
+            -f ref="${{ github.ref_name }}"
+          echo "relanzada"
