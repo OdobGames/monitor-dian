@@ -1,0 +1,411 @@
+[
+ {
+  "tag": "span",
+  "texto": "Agendamiento de citas",
+  "propio": "Agendamiento de citas",
+  "attrs": {},
+  "clicable": false
+ },
+ {
+  "tag": "div",
+  "texto": "",
+  "propio": "",
+  "attrs": {
+   "class": "d-flex justify-content-start align-items-center"
+  },
+  "clicable": true
+ },
+ {
+  "tag": "div",
+  "texto": "",
+  "propio": "",
+  "attrs": {
+   "tipo": "Control",
+   "id": "control_34",
+   "pantalla": "_NavPaginaDIAN",
+   "nombre": "btnVolver",
+   "class": "boton"
+  },
+  "clicable": true
+ },
+ {
+  "tag": "div",
+  "texto": "",
+  "propio": "",
+  "attrs": {
+   "tipo": "Control",
+   "id": "control_35",
+   "pantalla": "_NavPaginaDIAN",
+   "nombre": "btnPaginaActual",
+   "class": "boton"
+  },
+  "clicable": true
+ },
+ {
+  "tag": "span",
+  "texto": "Agendamiento de citas",
+  "propio": "Agendamiento de citas",
+  "attrs": {},
+  "clicable": false
+ },
+ {
+  "tag": "div",
+  "texto": "Agendar cita\nPrograme cita para trámites o servicios.\nGestionar cita\nConsulte, modifique, cancele o envíe recordatorio de las citas agendadas.",
+  "propio": "",
+  "attrs": {
+   "class": "d-flex flex-column flex-lg-row contenedor-botones-inicio justify-content-center justify-content-sm-center justify-content-md-center"
+  },
+  "clicable": true
+ },
+ {
+  "tag": "div",
+  "texto": "Agendar cita\nPrograme cita para trámites o servicios.",
+  "propio": "",
+  "attrs": {
+   "tipo": "Control",
+   "id": "control_209",
+   "pantalla": "Inicio",
+   "nombre": "btnSolicitarCita",
+   "class": "btnInicio mx-auto boton"
+  },
+  "clicable": true
+ },
+ {
+  "tag": "div",
+  "texto": "",
+  "propio": "",
+  "attrs": {
+   "class": "content-ImgBtnInicio"
+  },
+  "clicable": true
+ },
+ {
+  "tag": "div",
+  "texto": "Agendar cita\nPrograme cita para trámites o servicios.",
+  "propio": "",
+  "attrs": {
+   "class": "content-btnInicio",
+   "style": "cursor: pointer; display: flex; align-items: flex-start; flex-direction: column; gap: 32px;"
+  },
+  "clicable": true
+ },
+ {
+  "tag": "span",
+  "texto": "Agendar cita",
+  "propio": "Agendar cita",
+  "attrs": {
+   "style": "transition: 0.75s; font-family: Verdana; font-size: 16px; color: rgb(43, 50, 61); font-weight: normal; font-style: normal; line-height: 18px; text-shadow: none; box-shadow: none;"
+  },
+  "clicable": false
+ },
+ {
+  "tag": "span",
+  "texto": "Programe cita para trámites o servicios.",
+  "propio": "Programe cita para trámites o servicios.",
+  "attrs": {},
+  "clicable": false
+ },
+ {
+  "tag": "div",
+  "texto": "Gestionar cita\nConsulte, modifique, cancele o envíe recordatorio de las citas agendadas.",
+  "propio": "",
+  "attrs": {
+   "tipo": "Control",
+   "id": "control_210",
+   "pantalla": "Inicio",
+   "nombre": "btnGestionarCita",
+   "class": "btnInicio mx-auto boton"
+  },
+  "clicable": true
+ },
+ {
+  "tag": "div",
+  "texto": "",
+  "propio": "",
+  "attrs": {
+   "class": "content-ImgBtnInicio"
+  },
+  "clicable": true
+ },
+ {
+  "tag": "div",
+  "texto": "Gestionar cita\nConsulte, modifique, cancele o envíe recordatorio de las citas agendadas.",
+  "propio": "",
+  "attrs": {
+   "class": "content-btnInicio",
+   "style": "display: flex; align-items: flex-start; flex-direction: column; gap: 32px;"
+  },
+  "clicable": true
+ },
+ {
+  "tag": "span",
+  "texto": "Gestionar cita",
+  "propio": "Gestionar cita",
+  "attrs": {
+   "style": "transition: 0.75s; font-family: Verdana; font-size: 16px; color: rgb(43, 50, 61); font-weight: normal; font-style: normal; line-height: 18px; text-shadow: none; box-shadow: none;"
+  },
+  "clicable": false
+ },
+ {
+  "tag": "span",
+  "texto": "Consulte, modifique, cancele o envíe recordatorio de las citas agendadas.",
+  "propio": "Consulte, modifique, cancele o envíe recordatorio de las citas agendadas.",
+  "attrs": {},
+  "clicable": false
+ },
+ {
+  "tag": "div",
+  "texto": "Dirección de Impuestos y Aduanas Nacionales\nNIT: 800.197.268-4\nDirección: Sede principal | Bogotá, Nivel Central, carrera 8 Nº 6C - 38 Edificio San Agustín\nCódi",
+  "propio": "",
+  "attrs": {
+   "class": "d-flex justify-content-center align-items-center footer"
+  },
+  "clicable": true
+ },
+ {
+  "tag": "span",
+  "texto": "Dirección de Impuestos y Aduanas Nacionales",
+  "propio": "Dirección de Impuestos y Aduanas Nacionales",
+  "attrs": {},
+  "clicable": false
+ },
+ {
+  "tag": "span",
+  "texto": "NIT: 800.197.268-4",
+  "propio": "NIT: 800.197.268-4",
+  "attrs": {},
+  "clicable": false
+ },
+ {
+  "tag": "span",
+  "texto": "Dirección: Sede principal | Bogotá, Nivel Central, carrera 8 Nº 6C - 38 Edificio San Agustín",
+  "propio": "Dirección: Sede principal | Bogotá, Nivel Central, carrera 8 Nº 6C - 38 Edificio San Agustín",
+  "attrs": {},
+  "clicable": false
+ },
+ {
+  "tag": "span",
+  "texto": "Código Postal: 111711",
+  "propio": "Código Postal: 111711",
+  "attrs": {},
+  "clicable": false
+ },
+ {
+  "tag": "span",
+  "texto": "Horario Contact Center: Lunes a Viernes 8:00 a.m. a 7:00 p.m. y Sábados de 8:00 a.m. a 12:00 p.m.",
+  "propio": "Horario Contact Center: Lunes a Viernes 8:00 a.m. a 7:00 p.m. y Sábados de 8:00 a.m. a 12:00 p.m.",
+  "attrs": {},
+  "clicable": false
+ },
+ {
+  "tag": "div",
+  "texto": "",
+  "propio": "",
+  "attrs": {
+   "tipo": "Control",
+   "id": "control_9",
+   "pantalla": "_Footer",
+   "nombre": "btnTwitter",
+   "title": "TikTok",
+   "class": "boton"
+  },
+  "clicable": true
+ },
+ {
+  "tag": "div",
+  "texto": "",
+  "propio": "",
+  "attrs": {
+   "tipo": "Control",
+   "id": "control_10",
+   "pantalla": "_Footer",
+   "nombre": "btnYoutube",
+   "title": "Youtube",
+   "class": "boton"
+  },
+  "clicable": true
+ },
+ {
+  "tag": "div",
+  "texto": "",
+  "propio": "",
+  "attrs": {
+   "tipo": "Control",
+   "id": "control_8",
+   "pantalla": "_Footer",
+   "nombre": "btnLinkedin",
+   "title": "Linkedin",
+   "class": "boton"
+  },
+  "clicable": true
+ },
+ {
+  "tag": "div",
+  "texto": "",
+  "propio": "",
+  "attrs": {
+   "tipo": "Control",
+   "id": "control_6",
+   "pantalla": "_Footer",
+   "nombre": "btnFacebook",
+   "title": "Facebook",
+   "class": "boton"
+  },
+  "clicable": true
+ },
+ {
+  "tag": "div",
+  "texto": "",
+  "propio": "",
+  "attrs": {
+   "tipo": "Control",
+   "id": "control_7",
+   "pantalla": "_Footer",
+   "nombre": "btnInstagram",
+   "title": "Instagram",
+   "class": "boton"
+  },
+  "clicable": true
+ },
+ {
+  "tag": "div",
+  "texto": "",
+  "propio": "",
+  "attrs": {
+   "tipo": "Control",
+   "id": "control_11",
+   "pantalla": "_Footer",
+   "nombre": "btnTikTok",
+   "title": "TikTok",
+   "class": "boton"
+  },
+  "clicable": true
+ },
+ {
+  "tag": "span",
+  "texto": "Contacto",
+  "propio": "Contacto",
+  "attrs": {},
+  "clicable": false
+ },
+ {
+  "tag": "span",
+  "texto": "Contact Center",
+  "propio": "Contact Center",
+  "attrs": {},
+  "clicable": false
+ },
+ {
+  "tag": "span",
+  "texto": "57 601 489 9000 Línea de Contact Center atención de Impuestos",
+  "propio": "57 601 489 9000 Línea de Contact Center atención de Impuestos",
+  "attrs": {},
+  "clicable": false
+ },
+ {
+  "tag": "span",
+  "texto": "57 601 794 8880 Línea de Contact Center atención de Aduanas",
+  "propio": "57 601 794 8880 Línea de Contact Center atención de Aduanas",
+  "attrs": {},
+  "clicable": false
+ },
+ {
+  "tag": "span",
+  "texto": "57 601 794 8883 Línea Centro Nacional de Cobro",
+  "propio": "57 601 794 8883 Línea Centro Nacional de Cobro",
+  "attrs": {},
+  "clicable": false
+ },
+ {
+  "tag": "span",
+  "texto": "Servicio en Línea de Contacto",
+  "propio": "Servicio en Línea de Contacto",
+  "attrs": {},
+  "clicable": false
+ },
+ {
+  "tag": "a",
+  "texto": "PQSR y Denuncias | Puntos de contacto",
+  "propio": "",
+  "attrs": {
+   "target": "_blank",
+   "href": "https://www.dian.gov.co/atencionciudadano/PQSRD/Paginas/Inicio.aspx"
+  },
+  "clicable": true
+ },
+ {
+  "tag": "span",
+  "texto": "PQSR y Denuncias | Puntos de contacto",
+  "propio": "PQSR y Denuncias | Puntos de contacto",
+  "attrs": {},
+  "clicable": false
+ },
+ {
+  "tag": "a",
+  "texto": "Política de Seguridad de la Información",
+  "propio": "",
+  "attrs": {
+   "target": "_blank",
+   "href": "https://www.dian.gov.co/Documents/POLITICA_GENERAL_DE_SEGURIDAD_Y_PRIVACIDAD_DE_LA_INFORMACION.pdf"
+  },
+  "clicable": true
+ },
+ {
+  "tag": "span",
+  "texto": "Política de Seguridad de la Información",
+  "propio": "Política de Seguridad de la Información",
+  "attrs": {},
+  "clicable": false
+ },
+ {
+  "tag": "a",
+  "texto": "Políticas de privacidad y términos de uso",
+  "propio": "",
+  "attrs": {
+   "target": "_blank",
+   "href": "https://www.dian.gov.co/Paginas/Privacidad.aspx"
+  },
+  "clicable": true
+ },
+ {
+  "tag": "span",
+  "texto": "Políticas de privacidad y términos de uso",
+  "propio": "Políticas de privacidad y términos de uso",
+  "attrs": {},
+  "clicable": false
+ },
+ {
+  "tag": "a",
+  "texto": "Política de Tratamiento de Datos Personales",
+  "propio": "",
+  "attrs": {
+   "target": "_blank",
+   "href": "https://www.dian.gov.co/normatividad/Normatividad/Circular-000001-de-25-01-2019.pdf"
+  },
+  "clicable": true
+ },
+ {
+  "tag": "span",
+  "texto": "Política de Tratamiento de Datos Personales",
+  "propio": "Política de Tratamiento de Datos Personales",
+  "attrs": {},
+  "clicable": false
+ },
+ {
+  "tag": "a",
+  "texto": "Notificaciones Judiciales | Mapa del sitio",
+  "propio": "",
+  "attrs": {
+   "target": "_blank",
+   "href": "https://www.dian.gov.co/atencionciudadano/contactenos/Paginas/puntosdecontacto.aspx"
+  },
+  "clicable": true
+ },
+ {
+  "tag": "span",
+  "texto": "Notificaciones Judiciales | Mapa del sitio",
+  "propio": "Notificaciones Judiciales | Mapa del sitio",
+  "attrs": {},
+  "clicable": false
+ }
+]

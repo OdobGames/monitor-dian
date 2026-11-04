@@ -1,0 +1,305 @@
+{
+ "inicio": "2026-11-04 16:19:59",
+ "pasos": [
+  {
+   "paso": "00_inicio",
+   "url": "https://agendamiento.dian.gov.co/",
+   "n_elementos": 44,
+   "selects": [
+    {
+     "id": "",
+     "name": "",
+     "cls": "customSelect selectGestionCita",
+     "visible": false,
+     "opciones": []
+    },
+    {
+     "id": "",
+     "name": "",
+     "cls": "customSelect",
+     "visible": false,
+     "opciones": []
+    },
+    {
+     "id": "",
+     "name": "",
+     "cls": "customSelect",
+     "visible": false,
+     "opciones": []
+    },
+    {
+     "id": "",
+     "name": "",
+     "cls": "customSelect",
+     "visible": false,
+     "opciones": []
+    },
+    {
+     "id": "",
+     "name": "",
+     "cls": "customSelect",
+     "visible": false,
+     "opciones": []
+    },
+    {
+     "id": "",
+     "name": "",
+     "cls": "customSelect",
+     "visible": false,
+     "opciones": [
+      {
+       "valor": "",
+       "texto": ""
+      },
+      {
+       "valor": "1",
+       "texto": "Cali"
+      }
+     ]
+    },
+    {
+     "id": "",
+     "name": "",
+     "cls": "customSelect",
+     "visible": false,
+     "opciones": []
+    }
+   ]
+  },
+  {
+   "paso": "01_agendar",
+   "url": "https://agendamiento.dian.gov.co/",
+   "n_elementos": 47,
+   "selects": [
+    {
+     "id": "",
+     "name": "",
+     "cls": "customSelect selectGestionCita",
+     "visible": false,
+     "opciones": []
+    },
+    {
+     "id": "",
+     "name": "",
+     "cls": "customSelect",
+     "visible": false,
+     "opciones": []
+    },
+    {
+     "id": "",
+     "name": "",
+     "cls": "customSelect",
+     "visible": false,
+     "opciones": []
+    },
+    {
+     "id": "",
+     "name": "",
+     "cls": "customSelect",
+     "visible": false,
+     "opciones": []
+    },
+    {
+     "id": "",
+     "name": "",
+     "cls": "customSelect",
+     "visible": false,
+     "opciones": []
+    },
+    {
+     "id": "",
+     "name": "",
+     "cls": "customSelect",
+     "visible": false,
+     "opciones": [
+      {
+       "valor": "",
+       "texto": ""
+      },
+      {
+       "valor": "1",
+       "texto": "Cali"
+      }
+     ]
+    },
+    {
+     "id": "",
+     "name": "",
+     "cls": "customSelect",
+     "visible": false,
+     "opciones": []
+    }
+   ]
+  },
+  {
+   "paso": "02_categorias",
+   "url": "https://agendamiento.dian.gov.co/",
+   "n_elementos": 70,
+   "selects": [
+    {
+     "id": "",
+     "name": "",
+     "cls": "customSelect selectGestionCita",
+     "visible": false,
+     "opciones": []
+    },
+    {
+     "id": "",
+     "name": "",
+     "cls": "customSelect",
+     "visible": false,
+     "opciones": []
+    },
+    {
+     "id": "",
+     "name": "",
+     "cls": "customSelect",
+     "visible": false,
+     "opciones": []
+    },
+    {
+     "id": "",
+     "name": "",
+     "cls": "customSelect",
+     "visible": false,
+     "opciones": []
+    },
+    {
+     "id": "",
+     "name": "",
+     "cls": "customSelect",
+     "visible": false,
+     "opciones": []
+    },
+    {
+     "id": "",
+     "name": "",
+     "cls": "customSelect",
+     "visible": false,
+     "opciones": [
+      {
+       "valor": "",
+       "texto": ""
+      },
+      {
+       "valor": "1",
+       "texto": "Cali"
+      }
+     ]
+    },
+    {
+     "id": "",
+     "name": "",
+     "cls": "customSelect",
+     "visible": false,
+     "opciones": []
+    }
+   ]
+  },
+  {
+   "paso": "03_devoluciones",
+   "url": "https://agendamiento.dian.gov.co/",
+   "n_elementos": 75,
+   "selects": [
+    {
+     "id": "",
+     "name": "",
+     "cls": "customSelect selectGestionCita",
+     "visible": false,
+     "opciones": []
+    },
+    {
+     "id": "",
+     "name": "",
+     "cls": "customSelect",
+     "visible": false,
+     "opciones": []
+    },
+    {
+     "id": "",
+     "name": "",
+     "cls": "customSelect",
+     "visible": false,
+     "opciones": []
+    },
+    {
+     "id": "",
+     "name": "",
+     "cls": "customSelect",
+     "visible": false,
+     "opciones": []
+    },
+    {
+     "id": "",
+     "name": "",
+     "cls": "customSelect",
+     "visible": false,
+     "opciones": []
+    },
+    {
+     "id": "",
+     "name": "",
+     "cls": "customSelect",
+     "visible": false,
+     "opciones": [
+      {
+       "valor": "",
+       "texto": ""
+      },
+      {
+       "valor": "1",
+       "texto": "Cali"
+      }
+     ]
+    },
+    {
+     "id": "",
+     "name": "",
+     "cls": "customSelect",
+     "visible": false,
+     "opciones": [
+      {
+       "valor": "",
+       "texto": ""
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "sin_cupos": true,
+ "peticiones_api": [
+  "POST https://agendamiento.dian.gov.co/Player.aspx/ObtenerTimeOutSesion",
+  "POST https://agendamiento.dian.gov.co/Player.aspx/ObtenerConfiguracion",
+  "GET https://agendamiento.dian.gov.co/Recursos/CitasDIAN/Plantillas/_Inicio.html?t=20261104",
+  "GET https://agendamiento.dian.gov.co/Recursos/CitasDIAN/Plantillas/_PasoTres.html?t=20261104",
+  "GET https://agendamiento.dian.gov.co/Recursos/CitasDIAN/Plantillas/_PasoCuatro.html?t=20261104",
+  "GET https://agendamiento.dian.gov.co/Recursos/CitasDIAN/Plantillas/_DatosGestionCita.html?t=20261104",
+  "GET https://agendamiento.dian.gov.co/Recursos/CitasDIAN/Plantillas/_PasoUno.html?t=20261104",
+  "GET https://agendamiento.dian.gov.co/Recursos/CitasDIAN/Plantillas/_PasoDos.html?t=20261104",
+  "GET https://agendamiento.dian.gov.co/Recursos/CitasDIAN/Plantillas/_GestionCita.html?t=20261104",
+  "GET https://agendamiento.dian.gov.co/Recursos/CitasDIAN/Plantillas/_ModalInfoCita.html?t=20261104",
+  "GET https://agendamiento.dian.gov.co/Recursos/CitasDIAN/Plantillas/_ModalArchivosAsociados.html?t=20261104",
+  "GET https://agendamiento.dian.gov.co/Recursos/CitasDIAN/Plantillas/_ModalModificarCita.html?t=20261104",
+  "GET https://agendamiento.dian.gov.co/Recursos/CitasDIAN/Plantillas/_ModalConfirmaCancelacion.html?t=20261104",
+  "GET https://agendamiento.dian.gov.co/Recursos/CitasDIAN/Plantillas/_ModalConfirmaRecordatorio.html?t=20261104",
+  "GET https://agendamiento.dian.gov.co/Recursos/CitasDIAN/Plantillas/_ModalSinCitas.html?t=20261104",
+  "GET https://agendamiento.dian.gov.co/Recursos/CitasDIAN/Plantillas/_ModalEnviarRecordatorio.html?t=20261104",
+  "GET https://agendamiento.dian.gov.co/Recursos/CitasDIAN/Plantillas/_ModalError.html?t=20261104",
+  "GET https://agendamiento.dian.gov.co/Recursos/CitasDIAN/Plantillas/__Footer.html?t=20261104",
+  "GET https://agendamiento.dian.gov.co/Recursos/CitasDIAN/Plantillas/__NavPaginaDIAN.html?t=20261104",
+  "GET https://agendamiento.dian.gov.co/Recursos/CitasDIAN/Plantillas/__NavPaginaAgendamiento.html?t=20261104",
+  "GET https://agendamiento.dian.gov.co/Recursos/CitasDIAN/Plantillas/_ModalCancelarCita.html?t=20261104",
+  "GET https://agendamiento.dian.gov.co/Recursos/CitasDIAN/Plantillas/__Header.html?t=20261104",
+  "POST https://agendamiento.dian.gov.co/Player.aspx/RegistrarNotificacion",
+  "POST https://www.google-analytics.com/g/collect?v=2&tid=G-QD31P74WQR&gtm=45je6b30v9208862568za200zd9208862568xf1&_p=1793827204540&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AEAE&ae=a&are=1&cid=326541134.1793827205&frm=0&ngs=1&pscdl=noapi&rcb=1&sr=1400x1000&uaa=x86&uab=64&uafvl=Chromium%3B140.0.7339.16%7CNot%253DA%253FBrand%3B24.0.0.0%7CHeadlessChrome%3B140.0.7339.16&uam=&uamb=0&uap=Windows&uapv=10.0&uaw=0&ul=es-co&_s=1&tag_exp=115938466~115938469~118897920~118897930~120213116~120385422~120412528~120420416~120469145~120469153~121246026~121246034~123691370~123814185~123814946&sid=1793827202&sct=1&seg=0&dl=https%3A%2F%2Fagendamiento.dian.gov.co%2F&dt=Agendamiento%20de%20Citas&en=scroll&_fv=1&_ss=1&epn.percent_scrolled=90&tfd=4555",
+  "POST https://www.google-analytics.com/g/collect?v=2&tid=G-50PL8JC0GD&gtm=45je6b30v9208862568za200zd9208862568xf1&_p=1793827204540&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AEAE&ae=a&are=1&cid=326541134.1793827205&frm=0&ngs=1&pscdl=noapi&rcb=1&sr=1400x1000&uaa=x86&uab=64&uafvl=Chromium%3B140.0.7339.16%7CNot%253DA%253FBrand%3B24.0.0.0%7CHeadlessChrome%3B140.0.7339.16&uam=&uamb=0&uap=Windows&uapv=10.0&uaw=0&ul=es-co&_s=1&tag_exp=115938466~115938469~118897920~118897930~120213116~120385422~120412528~120420416~120469145~120469153~121246026~121246034~123691370~123814185~123814946&sid=1793827202&sct=1&seg=0&dl=https%3A%2F%2Fagendamiento.dian.gov.co%2F&dt=Agendamiento%20de%20Citas&en=scroll&_fv=1&_nsi=1&_ss=1&epn.percent_scrolled=90&tfd=4550",
+  "POST https://agendamiento.dian.gov.co/Player.aspx/ValidadorValidar",
+  "POST https://www.google-analytics.com/g/collect?v=2&tid=G-50PL8JC0GD&gtm=45je6b30v9208862568za208zd9208862568xf1&_p=1793827204540&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AAAAAAQ&are=1&cid=326541134.1793827205&frm=0&ngs=1&pscdl=noapi&rcb=1&sr=1400x1000&uaa=x86&uab=64&uafvl=Chromium%3B140.0.7339.16%7CNot%253DA%253FBrand%3B24.0.0.0%7CHeadlessChrome%3B140.0.7339.16&uam=&uamb=0&uap=Windows&uapv=10.0&uaw=0&ul=es-co&_s=2&tag_exp=115938466~115938469~118897920~118897930~120213116~120385422~120412528~120420416~120469145~120469153~121246026~121246034~123691370~123814185~123814946&sid=1793827202&sct=1&seg=1&dl=https%3A%2F%2Fagendamiento.dian.gov.co%2F&dt=Agendamiento%20de%20Citas&en=page_view&_ee=1&_et=7&tfd=9559",
+  "POST https://www.google-analytics.com/g/collect?v=2&tid=G-QD31P74WQR&gtm=45je6b30v9208862568za208zd9208862568xf1&_p=1793827204540&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AAAAAAQ&are=1&cid=326541134.1793827205&frm=0&ngs=1&pscdl=noapi&rcb=1&sr=1400x1000&uaa=x86&uab=64&uafvl=Chromium%3B140.0.7339.16%7CNot%253DA%253FBrand%3B24.0.0.0%7CHeadlessChrome%3B140.0.7339.16&uam=&uamb=0&uap=Windows&uapv=10.0&uaw=0&ul=es-co&_s=2&tag_exp=115938466~115938469~118897920~118897930~120213116~120385422~120412528~120420416~120469145~120469153~121246026~121246034~123691370~123814185~123814946&sid=1793827202&sct=1&seg=1&dl=https%3A%2F%2Fagendamiento.dian.gov.co%2F&dt=Agendamiento%20de%20Citas&en=page_view&_ee=1&_et=4&tfd=9561",
+  "POST https://agendamiento.dian.gov.co/Player.aspx/ValidadorValidar",
+  "POST https://agendamiento.dian.gov.co/Player.aspx/ValidadorValidar",
+  "POST https://agendamiento.dian.gov.co/Player.aspx/ValidadorValidar"
+ ],
+ "fin": "2026-11-04 16:20:21"
+}

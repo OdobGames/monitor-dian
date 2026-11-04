@@ -1,0 +1,1087 @@
+[
+ {
+  "t": 1793827200.0025716,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/",
+  "tipo": "document",
+  "post": null
+ },
+ {
+  "t": 1793827200.5057008,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/bundles/jquery?v=0XJqbYX4tFhH25_G_qbbiJSeeoDaZY7hjfcdPnQjLwc1",
+  "tipo": "script",
+  "post": null
+ },
+ {
+  "t": 1793827200.5059125,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/bundles/kendoUI?v=KkYUDJ2twNR-pmBoWCPhwinJTkIyvOkvpF4oNoll9ec1",
+  "tipo": "script",
+  "post": null
+ },
+ {
+  "t": 1793827200.506082,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/bundles/player?v=J1YRPl2hxpatE-dfpWbBQ3ZHZ9nmlbKcj8dxKDo4Cfs1",
+  "tipo": "script",
+  "post": null
+ },
+ {
+  "t": 1793827200.5062156,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/bundles/validadores?v=6f5_ry04yUxECYq4rFNsawtcHzrs7QZcXkoJ53R32tM1",
+  "tipo": "script",
+  "post": null
+ },
+ {
+  "t": 1793827200.5063381,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/js/qrcode.min.js",
+  "tipo": "script",
+  "post": null
+ },
+ {
+  "t": 1793827200.5064564,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/css/Player-1.3.css",
+  "tipo": "stylesheet",
+  "post": null
+ },
+ {
+  "t": 1793827200.5065622,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/css/Control.Alfanumerico-1.0.css",
+  "tipo": "stylesheet",
+  "post": null
+ },
+ {
+  "t": 1793827200.506634,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/css/KendoUI/kendo.common.min.css",
+  "tipo": "stylesheet",
+  "post": null
+ },
+ {
+  "t": 1793827200.5066988,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/css/KendoUI/kendo.default.min.css",
+  "tipo": "stylesheet",
+  "post": null
+ },
+ {
+  "t": 1793827200.5067635,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/css/KendoUI/kendo.default.mobile.min.css",
+  "tipo": "stylesheet",
+  "post": null
+ },
+ {
+  "t": 1793827200.5068297,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/css/bootstrap.min.css",
+  "tipo": "stylesheet",
+  "post": null
+ },
+ {
+  "t": 1793827200.5068862,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/css/bootstrap-grid.min.css",
+  "tipo": "stylesheet",
+  "post": null
+ },
+ {
+  "t": 1793827200.5069463,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/css/animate.css",
+  "tipo": "stylesheet",
+  "post": null
+ },
+ {
+  "t": 1793827200.5070097,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/js/bootstrap.min.js",
+  "tipo": "script",
+  "post": null
+ },
+ {
+  "t": 1793827200.5070715,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/js/bootstrap.bundle.min.js",
+  "tipo": "script",
+  "post": null
+ },
+ {
+  "t": 1793827200.5071297,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/Estilos.css?639087620800791385",
+  "tipo": "stylesheet",
+  "post": null
+ },
+ {
+  "t": 1793827200.5071852,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/botonDescarga.min.js?639092047669797786",
+  "tipo": "script",
+  "post": null
+ },
+ {
+  "t": 1793827200.5072412,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/botonesCambioPagina.min.js?639092047872463227",
+  "tipo": "script",
+  "post": null
+ },
+ {
+  "t": 1793827200.507384,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/botonesInicio.min.js?639092048155754874",
+  "tipo": "script",
+  "post": null
+ },
+ {
+  "t": 1793827200.5074599,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/botonesModal.min.js?639092048424687822",
+  "tipo": "script",
+  "post": null
+ },
+ {
+  "t": 1793827200.5075197,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/botonFecha.min.js?639092048709526344",
+  "tipo": "script",
+  "post": null
+ },
+ {
+  "t": 1793827200.5075748,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/captcha.min.js?639092048986725104",
+  "tipo": "script",
+  "post": null
+ },
+ {
+  "t": 1793827200.5076346,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/CargarArchivos.min.js?639092049243605286",
+  "tipo": "script",
+  "post": null
+ },
+ {
+  "t": 1793827200.50769,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/funciones.min.js?639245529693091273",
+  "tipo": "script",
+  "post": null
+ },
+ {
+  "t": 1793827200.5077546,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/grillaCitas.min.js?639092050217303115",
+  "tipo": "script",
+  "post": null
+ },
+ {
+  "t": 1793827200.5078132,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/kendo.culture.es-CO.min.js?639087657002013536",
+  "tipo": "script",
+  "post": null
+ },
+ {
+  "t": 1793827200.5078695,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/listaCategorigas.min.js?639092051029272343",
+  "tipo": "script",
+  "post": null
+ },
+ {
+  "t": 1793827200.507924,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/listaCiudades.min.js?639092051259584365",
+  "tipo": "script",
+  "post": null
+ },
+ {
+  "t": 1793827200.5079787,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/listaHoras.min.js?639092051482871110",
+  "tipo": "script",
+  "post": null
+ },
+ {
+  "t": 1793827200.5080318,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/listaSedes.min.js?639092051730216459",
+  "tipo": "script",
+  "post": null
+ },
+ {
+  "t": 1793827200.5080888,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/listaServicios.min.js?639092052020378541",
+  "tipo": "script",
+  "post": null
+ },
+ {
+  "t": 1793827200.5081456,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/listaTipoAtencion.min.js?639092052267253605",
+  "tipo": "script",
+  "post": null
+ },
+ {
+  "t": 1793827200.5082006,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/listaTipoPersona.min.js?639092052512100718",
+  "tipo": "script",
+  "post": null
+ },
+ {
+  "t": 1793827200.5082545,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/politicaDatos.min.js?639092052752106045",
+  "tipo": "script",
+  "post": null
+ },
+ {
+  "t": 1793827200.508324,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/RegistrarVisitasPaginas.min.js?639092052990229381",
+  "tipo": "script",
+  "post": null
+ },
+ {
+  "t": 1793827200.5083795,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/utilidad.min.js?639146443481993202",
+  "tipo": "script",
+  "post": null
+ },
+ {
+  "t": 1793827200.5084405,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/validacion.min.js?639146443883107127",
+  "tipo": "script",
+  "post": null
+ },
+ {
+  "t": 1793827200.5084994,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/images/loading.svg",
+  "tipo": "image",
+  "post": null
+ },
+ {
+  "t": 1793827200.5948353,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/css/KendoUI/images/kendoui.woff?v=1.1",
+  "tipo": "font",
+  "post": null
+ },
+ {
+  "t": 1793827200.6003568,
+  "metodo": "POST",
+  "url": "https://agendamiento.dian.gov.co/Player.aspx/ObtenerTimeOutSesion",
+  "tipo": "xhr",
+  "post": null
+ },
+ {
+  "t": 1793827201.9775515,
+  "metodo": "POST",
+  "url": "https://agendamiento.dian.gov.co/Player.aspx/ObtenerConfiguracion",
+  "tipo": "xhr",
+  "post": "{\"rutaRecurso\":\"Recursos/CitasDIAN/\",\"nombreRecurso\":\"\"}"
+ },
+ {
+  "t": 1793827202.3240438,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/Plantillas/_Inicio.html?t=20261104",
+  "tipo": "xhr",
+  "post": null
+ },
+ {
+  "t": 1793827202.3241854,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/Plantillas/_PasoUno.html?t=20261104",
+  "tipo": "xhr",
+  "post": null
+ },
+ {
+  "t": 1793827202.3242803,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/Plantillas/_PasoDos.html?t=20261104",
+  "tipo": "xhr",
+  "post": null
+ },
+ {
+  "t": 1793827202.3243973,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/Plantillas/_PasoTres.html?t=20261104",
+  "tipo": "xhr",
+  "post": null
+ },
+ {
+  "t": 1793827202.324484,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/Plantillas/_PasoCuatro.html?t=20261104",
+  "tipo": "xhr",
+  "post": null
+ },
+ {
+  "t": 1793827202.324563,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/Plantillas/_DatosGestionCita.html?t=20261104",
+  "tipo": "xhr",
+  "post": null
+ },
+ {
+  "t": 1793827202.3247123,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/Plantillas/_GestionCita.html?t=20261104",
+  "tipo": "xhr",
+  "post": null
+ },
+ {
+  "t": 1793827202.3247867,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/Plantillas/_ModalArchivosAsociados.html?t=20261104",
+  "tipo": "xhr",
+  "post": null
+ },
+ {
+  "t": 1793827202.324854,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/Plantillas/_ModalInfoCita.html?t=20261104",
+  "tipo": "xhr",
+  "post": null
+ },
+ {
+  "t": 1793827202.3249161,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/Plantillas/_ModalCancelarCita.html?t=20261104",
+  "tipo": "xhr",
+  "post": null
+ },
+ {
+  "t": 1793827202.3249826,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/Plantillas/_ModalConfirmaCancelacion.html?t=20261104",
+  "tipo": "xhr",
+  "post": null
+ },
+ {
+  "t": 1793827202.325046,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/Plantillas/_ModalEnviarRecordatorio.html?t=20261104",
+  "tipo": "xhr",
+  "post": null
+ },
+ {
+  "t": 1793827202.3251088,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/Plantillas/_ModalConfirmaRecordatorio.html?t=20261104",
+  "tipo": "xhr",
+  "post": null
+ },
+ {
+  "t": 1793827202.325181,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/Plantillas/_ModalModificarCita.html?t=20261104",
+  "tipo": "xhr",
+  "post": null
+ },
+ {
+  "t": 1793827202.3252425,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/Plantillas/_ModalSinCitas.html?t=20261104",
+  "tipo": "xhr",
+  "post": null
+ },
+ {
+  "t": 1793827202.3253284,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/Plantillas/_ModalError.html?t=20261104",
+  "tipo": "xhr",
+  "post": null
+ },
+ {
+  "t": 1793827202.3253977,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/Plantillas/__NavPaginaDIAN.html?t=20261104",
+  "tipo": "xhr",
+  "post": null
+ },
+ {
+  "t": 1793827202.3254604,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/Plantillas/__NavPaginaAgendamiento.html?t=20261104",
+  "tipo": "xhr",
+  "post": null
+ },
+ {
+  "t": 1793827202.3255222,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/Plantillas/__Footer.html?t=20261104",
+  "tipo": "xhr",
+  "post": null
+ },
+ {
+  "t": 1793827202.3255827,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/Plantillas/__Header.html?t=20261104",
+  "tipo": "xhr",
+  "post": null
+ },
+ {
+  "t": 1793827202.438254,
+  "metodo": "GET",
+  "url": "https://www.google.com/recaptcha/api.js?onload=CaptchaCallback&render=explicit&_=1793827200526",
+  "tipo": "script",
+  "post": null
+ },
+ {
+  "t": 1793827202.4384136,
+  "metodo": "GET",
+  "url": "https://www.googletagmanager.com/gtag/js?id=G-50PL8JC0GD&_=1793827200527",
+  "tipo": "script",
+  "post": null
+ },
+ {
+  "t": 1793827202.4385448,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/img/Header/logo_DIAN.svg",
+  "tipo": "image",
+  "post": null
+ },
+ {
+  "t": 1793827202.4386473,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/img/Header/logo_header.svg",
+  "tipo": "image",
+  "post": null
+ },
+ {
+  "t": 1793827202.4387326,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/img/Footer/logo_gov.svg",
+  "tipo": "image",
+  "post": null
+ },
+ {
+  "t": 1793827202.4388235,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/img/Footer/logo_pais.svg",
+  "tipo": "image",
+  "post": null
+ },
+ {
+  "t": 1793827202.43895,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/img/Footer/phone.svg",
+  "tipo": "image",
+  "post": null
+ },
+ {
+  "t": 1793827202.439062,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/img/Footer/separador.svg",
+  "tipo": "image",
+  "post": null
+ },
+ {
+  "t": 1793827202.4391773,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/img/NavPaginas/icon_separator.svg",
+  "tipo": "image",
+  "post": null
+ },
+ {
+  "t": 1793827202.439275,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/img/Modal/icon_modal_alerta.svg",
+  "tipo": "image",
+  "post": null
+ },
+ {
+  "t": 1793827202.4393928,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/img/Modal/icon_modal_info.svg",
+  "tipo": "image",
+  "post": null
+ },
+ {
+  "t": 1793827202.4395483,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/img/Modal/icon_modal.svg",
+  "tipo": "image",
+  "post": null
+ },
+ {
+  "t": 1793827202.4396756,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/img/Modal/icon_files.svg",
+  "tipo": "image",
+  "post": null
+ },
+ {
+  "t": 1793827202.4397979,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/img/PasoTres/btnDownload.svg",
+  "tipo": "image",
+  "post": null
+ },
+ {
+  "t": 1793827202.4398892,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/img/icon_arrow_right.svg",
+  "tipo": "image",
+  "post": null
+ },
+ {
+  "t": 1793827202.4399831,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/img/icon_arrow_back.svg",
+  "tipo": "image",
+  "post": null
+ },
+ {
+  "t": 1793827202.440091,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/img/Inicio/btnSolicitarCita.svg",
+  "tipo": "image",
+  "post": null
+ },
+ {
+  "t": 1793827202.4401941,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/img/Inicio/btnGestionarCita.svg",
+  "tipo": "image",
+  "post": null
+ },
+ {
+  "t": 1793827202.4402921,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/img/PasoDos/Fecha.svg",
+  "tipo": "image",
+  "post": null
+ },
+ {
+  "t": 1793827202.4428396,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/fuentes/Work_Sans/WorkSans-Regular.ttf",
+  "tipo": "font",
+  "post": null
+ },
+ {
+  "t": 1793827202.4495542,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/img/Footer/icon_x.svg",
+  "tipo": "image",
+  "post": null
+ },
+ {
+  "t": 1793827202.4497344,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/img/Footer/icon_youtube.svg",
+  "tipo": "image",
+  "post": null
+ },
+ {
+  "t": 1793827202.4498794,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/img/Footer/icon_linkedin.svg",
+  "tipo": "image",
+  "post": null
+ },
+ {
+  "t": 1793827202.4499934,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/img/Footer/icon_facebook.svg",
+  "tipo": "image",
+  "post": null
+ },
+ {
+  "t": 1793827202.4501061,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/img/Footer/icon_instagram.svg",
+  "tipo": "image",
+  "post": null
+ },
+ {
+  "t": 1793827202.450212,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/img/Footer/icon_tiktok.svg",
+  "tipo": "image",
+  "post": null
+ },
+ {
+  "t": 1793827202.4517002,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/img/NavPaginas/btnPortalAgendamiento.svg",
+  "tipo": "image",
+  "post": null
+ },
+ {
+  "t": 1793827202.4518635,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/img/NavPaginas/btnPagActualGestion.svg",
+  "tipo": "image",
+  "post": null
+ },
+ {
+  "t": 1793827202.453641,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/img/NavPaginas/btnPortalDIAN.svg",
+  "tipo": "image",
+  "post": null
+ },
+ {
+  "t": 1793827202.4537764,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/img/NavPaginas/bnPagActualAgeCitas.svg",
+  "tipo": "image",
+  "post": null
+ },
+ {
+  "t": 1793827202.463186,
+  "metodo": "POST",
+  "url": "https://agendamiento.dian.gov.co/Player.aspx/RegistrarNotificacion",
+  "tipo": "xhr",
+  "post": "{\"mensaje\":\"grecaptcha is not defined\",\"detalle\":\"\\nReferenceError: grecaptcha is not defined\\n    at resetCaptcha (https://agendamiento.dian.gov.co/Recursos/CitasDIAN/captcha.min.js?639092048986725104:10:25)\\n    at ResetCaptcha (https://agendamiento.dian.gov.co/Recursos/CitasDIAN/funciones.min.js?639245529693091273:2:2602)\\n    at Object.EvaluarExpresion (https://agendamiento.dian.gov.co/bundles/player?v=J1YRPl2hxpatE-dfpWbBQ3ZHZ9nmlbKcj8dxKDo4Cfs1:1:132679)\\n    at Object.Ejecutar (https://agendamiento.dian.gov.co/bundles/player?v=J1YRPl2hxpatE-dfpWbBQ3ZHZ9nmlbKcj8dxKDo4Cfs1:1:130357)\\n    at Object.EjecutarAccion (https://agendamiento.dian.gov.co/bundles/player?v=J1YRPl2hxpatE-dfpWbBQ3ZHZ9nmlbKcj8dxKDo4Cfs1:1:134608)\\n    at Object.<anonymous> (https://agendamiento.dian.gov.co/bundles/player?v=J1YRPl2hxpatE-dfpWbBQ3ZHZ9nmlbKcj8dxKDo4Cfs1:1:140358)\\nIP:127.0.0.1\\n\\n***Navegador***\\nvendor: Google Inc.\\nappCodeName: Mozilla\\nappVersion: 5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0 Safari/537.36\\nplatform: Linux x86_64\\nuserAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0 Safari/537.36\\nlanguage: es-CO\",\"tipoNotificacion\":2,\"recurso\":\"Recursos/CitasDIAN/\"}"
+ },
+ {
+  "t": 1793827202.517754,
+  "metodo": "GET",
+  "url": "https://www.gstatic.com/recaptcha/releases/bSuJ2xBC8cFy7pM4Z3Hu9boH/recaptcha__es_419.js",
+  "tipo": "script",
+  "post": null
+ },
+ {
+  "t": 1793827204.5294096,
+  "metodo": "GET",
+  "url": "https://www.google.com/recaptcha/api2/anchor?ar=1&k=6Lddf4UqAAAAAECc-yjsDQaGvH_9KbmSpjNCm_J6&co=aHR0cHM6Ly9hZ2VuZGFtaWVudG8uZGlhbi5nb3YuY286NDQz&hl=es-419&v=bSuJ2xBC8cFy7pM4Z3Hu9boH&size=normal&anchor-ms=20000&execute-ms=30000&cb=r6od934hy4b3",
+  "tipo": "document",
+  "post": null
+ },
+ {
+  "t": 1793827204.53288,
+  "metodo": "GET",
+  "url": "https://www.google.com/recaptcha/api2/anchor?ar=1&k=6Lddf4UqAAAAAECc-yjsDQaGvH_9KbmSpjNCm_J6&co=aHR0cHM6Ly9hZ2VuZGFtaWVudG8uZGlhbi5nb3YuY286NDQz&hl=es-419&v=bSuJ2xBC8cFy7pM4Z3Hu9boH&size=normal&anchor-ms=20000&execute-ms=30000&cb=p98hvfr3zmeb",
+  "tipo": "document",
+  "post": null
+ },
+ {
+  "t": 1793827204.5340652,
+  "metodo": "GET",
+  "url": "https://www.google.com/recaptcha/api2/anchor?ar=1&k=6Lddf4UqAAAAAECc-yjsDQaGvH_9KbmSpjNCm_J6&co=aHR0cHM6Ly9hZ2VuZGFtaWVudG8uZGlhbi5nb3YuY286NDQz&hl=es-419&v=bSuJ2xBC8cFy7pM4Z3Hu9boH&size=normal&anchor-ms=20000&execute-ms=30000&cb=fbq6th207nqg",
+  "tipo": "document",
+  "post": null
+ },
+ {
+  "t": 1793827204.5350816,
+  "metodo": "GET",
+  "url": "https://www.google.com/recaptcha/api2/anchor?ar=1&k=6Lddf4UqAAAAAECc-yjsDQaGvH_9KbmSpjNCm_J6&co=aHR0cHM6Ly9hZ2VuZGFtaWVudG8uZGlhbi5nb3YuY286NDQz&hl=es-419&v=bSuJ2xBC8cFy7pM4Z3Hu9boH&size=normal&anchor-ms=20000&execute-ms=30000&cb=n5jdxw9o0d65",
+  "tipo": "document",
+  "post": null
+ },
+ {
+  "t": 1793827204.5629036,
+  "metodo": "POST",
+  "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-50PL8JC0GD&gtm=45je6b30v9208862568za200zd9208862568xf1&_p=1793827204540&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AEAE&ae=a&are=1&cid=326541134.1793827205&frm=0&ngs=1&pscdl=noapi&rcb=1&sr=1400x1000&uaa=x86&uab=64&uafvl=Chromium%3B140.0.7339.16%7CNot%253DA%253FBrand%3B24.0.0.0%7CHeadlessChrome%3B140.0.7339.16&uam=&uamb=0&uap=Windows&uapv=10.0&uaw=0&ul=es-co&_s=1&tag_exp=115938466~115938469~118897920~118897930~120213116~120385422~120412528~120420416~120469145~120469153~121246026~121246034~123691370~123814185~123814946&sid=1793827202&sct=1&seg=0&dl=https%3A%2F%2Fagendamiento.dian.gov.co%2F&dt=Agendamiento%20de%20Citas&en=scroll&_fv=1&_nsi=1&_ss=1&epn.percent_scrolled=90&tfd=4550",
+  "tipo": "fetch",
+  "post": null
+ },
+ {
+  "t": 1793827204.5630844,
+  "metodo": "POST",
+  "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-QD31P74WQR&gtm=45je6b30v9208862568za200zd9208862568xf1&_p=1793827204540&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AEAE&ae=a&are=1&cid=326541134.1793827205&frm=0&ngs=1&pscdl=noapi&rcb=1&sr=1400x1000&uaa=x86&uab=64&uafvl=Chromium%3B140.0.7339.16%7CNot%253DA%253FBrand%3B24.0.0.0%7CHeadlessChrome%3B140.0.7339.16&uam=&uamb=0&uap=Windows&uapv=10.0&uaw=0&ul=es-co&_s=1&tag_exp=115938466~115938469~118897920~118897930~120213116~120385422~120412528~120420416~120469145~120469153~121246026~121246034~123691370~123814185~123814946&sid=1793827202&sct=1&seg=0&dl=https%3A%2F%2Fagendamiento.dian.gov.co%2F&dt=Agendamiento%20de%20Citas&en=scroll&_fv=1&_ss=1&epn.percent_scrolled=90&tfd=4555",
+  "tipo": "fetch",
+  "post": null
+ },
+ {
+  "t": 1793827204.628021,
+  "metodo": "GET",
+  "url": "https://www.gstatic.com/recaptcha/releases/bSuJ2xBC8cFy7pM4Z3Hu9boH/styles__ltr.css",
+  "tipo": "stylesheet",
+  "post": null
+ },
+ {
+  "t": 1793827204.628209,
+  "metodo": "GET",
+  "url": "https://www.gstatic.com/recaptcha/releases/bSuJ2xBC8cFy7pM4Z3Hu9boH/recaptcha__es_419.js",
+  "tipo": "script",
+  "post": null
+ },
+ {
+  "t": 1793827204.629087,
+  "metodo": "GET",
+  "url": "https://www.gstatic.com/recaptcha/releases/bSuJ2xBC8cFy7pM4Z3Hu9boH/styles__ltr.css",
+  "tipo": "stylesheet",
+  "post": null
+ },
+ {
+  "t": 1793827204.6292288,
+  "metodo": "GET",
+  "url": "https://www.gstatic.com/recaptcha/releases/bSuJ2xBC8cFy7pM4Z3Hu9boH/recaptcha__es_419.js",
+  "tipo": "script",
+  "post": null
+ },
+ {
+  "t": 1793827204.7469313,
+  "metodo": "GET",
+  "url": "https://www.google.com/recaptcha/api2/webworker.js?hl=es-419&v=bSuJ2xBC8cFy7pM4Z3Hu9boH",
+  "tipo": "script",
+  "post": null
+ },
+ {
+  "t": 1793827204.7528312,
+  "metodo": "GET",
+  "url": "https://www.gstatic.com/recaptcha/api2/logo_48.png",
+  "tipo": "image",
+  "post": null
+ },
+ {
+  "t": 1793827204.7530093,
+  "metodo": "GET",
+  "url": "https://fonts.gstatic.com/s/roboto/v48/KFO7CnqEu92Fr1ME7kSn66aGLdTylUAMa3yUBA.woff2",
+  "tipo": "font",
+  "post": null
+ },
+ {
+  "t": 1793827204.7701344,
+  "metodo": "GET",
+  "url": "https://www.google.com/recaptcha/api2/webworker.js?hl=es-419&v=bSuJ2xBC8cFy7pM4Z3Hu9boH",
+  "tipo": "script",
+  "post": null
+ },
+ {
+  "t": 1793827204.7747147,
+  "metodo": "GET",
+  "url": "https://www.gstatic.com/recaptcha/api2/logo_48.png",
+  "tipo": "image",
+  "post": null
+ },
+ {
+  "t": 1793827204.7751398,
+  "metodo": "GET",
+  "url": "https://fonts.gstatic.com/s/roboto/v48/KFO7CnqEu92Fr1ME7kSn66aGLdTylUAMa3yUBA.woff2",
+  "tipo": "font",
+  "post": null
+ },
+ {
+  "t": 1793827204.800463,
+  "metodo": "GET",
+  "url": "https://www.gstatic.com/recaptcha/releases/bSuJ2xBC8cFy7pM4Z3Hu9boH/recaptcha__es_419.js",
+  "tipo": "other",
+  "post": null
+ },
+ {
+  "t": 1793827204.8006961,
+  "metodo": "GET",
+  "url": "https://www.gstatic.com/recaptcha/releases/bSuJ2xBC8cFy7pM4Z3Hu9boH/recaptcha__es_419.js",
+  "tipo": "other",
+  "post": null
+ },
+ {
+  "t": 1793827205.1381152,
+  "metodo": "GET",
+  "url": "https://www.google.com/recaptcha/api2/bframe?hl=es-419&v=bSuJ2xBC8cFy7pM4Z3Hu9boH&k=6Lddf4UqAAAAAECc-yjsDQaGvH_9KbmSpjNCm_J6&bft=0dAFcWeA7sHvYVbduV4uLt3lqDXE7h5pqu2OK6HxG_PrQN9xE2ij20ctoPJIyBD1qFBO0CtKFFjVos_FQkfJfSjhNr2kpQnbshTA",
+  "tipo": "document",
+  "post": null
+ },
+ {
+  "t": 1793827205.1430597,
+  "metodo": "GET",
+  "url": "https://www.google.com/recaptcha/api2/bframe?hl=es-419&v=bSuJ2xBC8cFy7pM4Z3Hu9boH&k=6Lddf4UqAAAAAECc-yjsDQaGvH_9KbmSpjNCm_J6&bft=0dAFcWeA62Z5IM_6Uys1w14ai6OQZC31k4DT3e8dNRgJVYvMhe-40uHx-GGpDFrNkpTJVHjKRlLAU00_BVG3dGS_r1QroNgzttYA",
+  "tipo": "document",
+  "post": null
+ },
+ {
+  "t": 1793827205.180714,
+  "metodo": "GET",
+  "url": "https://www.gstatic.com/recaptcha/releases/bSuJ2xBC8cFy7pM4Z3Hu9boH/styles__ltr.css",
+  "tipo": "stylesheet",
+  "post": null
+ },
+ {
+  "t": 1793827205.1811886,
+  "metodo": "GET",
+  "url": "https://www.gstatic.com/recaptcha/releases/bSuJ2xBC8cFy7pM4Z3Hu9boH/recaptcha__es_419.js",
+  "tipo": "script",
+  "post": null
+ },
+ {
+  "t": 1793827205.2498455,
+  "metodo": "GET",
+  "url": "https://www.gstatic.com/recaptcha/releases/bSuJ2xBC8cFy7pM4Z3Hu9boH/styles__ltr.css",
+  "tipo": "stylesheet",
+  "post": null
+ },
+ {
+  "t": 1793827205.250396,
+  "metodo": "GET",
+  "url": "https://www.gstatic.com/recaptcha/releases/bSuJ2xBC8cFy7pM4Z3Hu9boH/recaptcha__es_419.js",
+  "tipo": "script",
+  "post": null
+ },
+ {
+  "t": 1793827205.2559018,
+  "metodo": "GET",
+  "url": "https://fonts.gstatic.com/s/roboto/v48/KFO7CnqEu92Fr1ME7kSn66aGLdTylUAMa3yUBA.woff2",
+  "tipo": "font",
+  "post": null
+ },
+ {
+  "t": 1793827205.2854197,
+  "metodo": "GET",
+  "url": "https://fonts.gstatic.com/s/roboto/v48/KFO7CnqEu92Fr1ME7kSn66aGLdTylUAMa3yUBA.woff2",
+  "tipo": "font",
+  "post": null
+ },
+ {
+  "t": 1793827206.3500597,
+  "metodo": "POST",
+  "url": "https://agendamiento.dian.gov.co/Player.aspx/ValidadorValidar",
+  "tipo": "xhr",
+  "post": "{nombre:'ValidadorDatos.CitasWeb',configuracion:{\"ConfiguracionServicioRestEncriptado\":\"n6ch/SV/k+dI4u2UFdFZt/brXMA9zVn5kM201dC5IYv7J3PpQUXUWqySuM59vvO2Emx2PVFvYTtaJ7Rd6sSsRSlPtbn2zrNctjIsohWmnJHvHUPuBieiBA0jm0eX62xUQ+6BFWhtYjg1ePMyZSQYL79D2dZBRPWvmBFKvDrg50aJU/0Tsgpc2oALqH1hAXFJfBsx+jJJ6QvEZWmJH+3a/g==\",\"ControlesGeolocalizacion\":[],\"FormatoCitas\":\"{cita.codigo}    {cita.fecha}    {cita.Oficina.Nombre}    img/icono1.png    img/icono2.png    img/icono3.png\",\"IdPais\":1,\"DistanciaMinima\":0,\"TopOficinasCercanas\":0,\"FormatoEncabezadoOficina\":\"\",\"FormatoOficina\":\"{0}\",\"ModoWebPlayer\":true,\"Archivo\":{\"Ruta\":\"Recursos/CitasDIAN/\",\"FechaActualizacion\":\"2026-09-09T12:19:00.5196151-05:00\"},\"TipoPolitica\":0,\"ObtenerEspecialidadesVirtuales\":false,\"ObtenerEspecialidadesPresenciales\":false,\"GenerarTurno\":false}, respuestaBase: {\"Fuente\":\"Validador\",\"Encontrado\":false,\"DetalleAdicional\":\"manejadorEncontroTiposCliente\",\"ObjetosEncontrados\":[],\"Recurso\":\"CitasDIAN\"}}"
+ },
+ {
+  "t": 1793827206.363473,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/fuentes/Ubuntu/Ubuntu-Regular.ttf",
+  "tipo": "font",
+  "post": null
+ },
+ {
+  "t": 1793827206.3778007,
+  "metodo": "GET",
+  "url": "https://www.google.com/recaptcha/api2/anchor?ar=1&k=6Lddf4UqAAAAAECc-yjsDQaGvH_9KbmSpjNCm_J6&co=aHR0cHM6Ly9hZ2VuZGFtaWVudG8uZGlhbi5nb3YuY286NDQz&hl=es-419&v=bSuJ2xBC8cFy7pM4Z3Hu9boH&size=normal&anchor-ms=20000&execute-ms=30000&cb=x5yeazda1wm",
+  "tipo": "document",
+  "post": null
+ },
+ {
+  "t": 1793827206.381014,
+  "metodo": "GET",
+  "url": "https://www.google.com/recaptcha/api2/anchor?ar=1&k=6Lddf4UqAAAAAECc-yjsDQaGvH_9KbmSpjNCm_J6&co=aHR0cHM6Ly9hZ2VuZGFtaWVudG8uZGlhbi5nb3YuY286NDQz&hl=es-419&v=bSuJ2xBC8cFy7pM4Z3Hu9boH&size=normal&anchor-ms=20000&execute-ms=30000&cb=otuzvnlxidbj",
+  "tipo": "document",
+  "post": null
+ },
+ {
+  "t": 1793827206.4351995,
+  "metodo": "GET",
+  "url": "https://www.gstatic.com/recaptcha/releases/bSuJ2xBC8cFy7pM4Z3Hu9boH/styles__ltr.css",
+  "tipo": "stylesheet",
+  "post": null
+ },
+ {
+  "t": 1793827206.4358516,
+  "metodo": "GET",
+  "url": "https://www.gstatic.com/recaptcha/releases/bSuJ2xBC8cFy7pM4Z3Hu9boH/recaptcha__es_419.js",
+  "tipo": "script",
+  "post": null
+ },
+ {
+  "t": 1793827206.45318,
+  "metodo": "GET",
+  "url": "https://www.google.com/recaptcha/api2/webworker.js?hl=es-419&v=bSuJ2xBC8cFy7pM4Z3Hu9boH",
+  "tipo": "script",
+  "post": null
+ },
+ {
+  "t": 1793827206.4581199,
+  "metodo": "GET",
+  "url": "https://fonts.gstatic.com/s/roboto/v48/KFO7CnqEu92Fr1ME7kSn66aGLdTylUAMa3yUBA.woff2",
+  "tipo": "font",
+  "post": null
+ },
+ {
+  "t": 1793827206.4613137,
+  "metodo": "GET",
+  "url": "https://www.gstatic.com/recaptcha/api2/logo_48.png",
+  "tipo": "image",
+  "post": null
+ },
+ {
+  "t": 1793827206.4761446,
+  "metodo": "GET",
+  "url": "https://www.gstatic.com/recaptcha/releases/bSuJ2xBC8cFy7pM4Z3Hu9boH/styles__ltr.css",
+  "tipo": "stylesheet",
+  "post": null
+ },
+ {
+  "t": 1793827206.4766376,
+  "metodo": "GET",
+  "url": "https://www.gstatic.com/recaptcha/releases/bSuJ2xBC8cFy7pM4Z3Hu9boH/recaptcha__es_419.js",
+  "tipo": "script",
+  "post": null
+ },
+ {
+  "t": 1793827206.4771457,
+  "metodo": "GET",
+  "url": "https://www.gstatic.com/recaptcha/releases/bSuJ2xBC8cFy7pM4Z3Hu9boH/recaptcha__es_419.js",
+  "tipo": "other",
+  "post": null
+ },
+ {
+  "t": 1793827206.4962378,
+  "metodo": "GET",
+  "url": "https://fonts.gstatic.com/s/roboto/v48/KFO7CnqEu92Fr1ME7kSn66aGLdTylUAMa3yUBA.woff2",
+  "tipo": "font",
+  "post": null
+ },
+ {
+  "t": 1793827206.5137541,
+  "metodo": "GET",
+  "url": "https://www.google.com/recaptcha/api2/webworker.js?hl=es-419&v=bSuJ2xBC8cFy7pM4Z3Hu9boH",
+  "tipo": "script",
+  "post": null
+ },
+ {
+  "t": 1793827206.5198815,
+  "metodo": "GET",
+  "url": "https://www.gstatic.com/recaptcha/api2/logo_48.png",
+  "tipo": "image",
+  "post": null
+ },
+ {
+  "t": 1793827206.5275757,
+  "metodo": "GET",
+  "url": "https://www.gstatic.com/recaptcha/releases/bSuJ2xBC8cFy7pM4Z3Hu9boH/recaptcha__es_419.js",
+  "tipo": "other",
+  "post": null
+ },
+ {
+  "t": 1793827206.5315082,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/img/PasoUno/PersonaNatural.svg",
+  "tipo": "image",
+  "post": null
+ },
+ {
+  "t": 1793827206.5317197,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/img/PasoUno/PersonaJuridica.svg",
+  "tipo": "image",
+  "post": null
+ },
+ {
+  "t": 1793827206.787773,
+  "metodo": "GET",
+  "url": "https://www.google.com/recaptcha/api2/bframe?hl=es-419&v=bSuJ2xBC8cFy7pM4Z3Hu9boH&k=6Lddf4UqAAAAAECc-yjsDQaGvH_9KbmSpjNCm_J6&bft=0dAFcWeA5kEfbMkbfKsivO0p-n30DeKK41DbUbC-bQMNTKB4XGSqDSxMWKSnq_fv3_Ic2pg6dJDK1A2hNvt3jWy1bCva08SC40Tw",
+  "tipo": "document",
+  "post": null
+ },
+ {
+  "t": 1793827206.8521109,
+  "metodo": "GET",
+  "url": "https://www.gstatic.com/recaptcha/releases/bSuJ2xBC8cFy7pM4Z3Hu9boH/styles__ltr.css",
+  "tipo": "stylesheet",
+  "post": null
+ },
+ {
+  "t": 1793827206.8526883,
+  "metodo": "GET",
+  "url": "https://www.gstatic.com/recaptcha/releases/bSuJ2xBC8cFy7pM4Z3Hu9boH/recaptcha__es_419.js",
+  "tipo": "script",
+  "post": null
+ },
+ {
+  "t": 1793827206.877037,
+  "metodo": "GET",
+  "url": "https://www.google.com/recaptcha/api2/bframe?hl=es-419&v=bSuJ2xBC8cFy7pM4Z3Hu9boH&k=6Lddf4UqAAAAAECc-yjsDQaGvH_9KbmSpjNCm_J6&bft=0dAFcWeA51m-mFz7p1J0Ka8BeWub5HN38Emv-8MsGAa4dbBXQJCbuPJAPxP-SZ_bulEPQGFQg2dub1lhOGdTBNks8pIgE8NVnSjA",
+  "tipo": "document",
+  "post": null
+ },
+ {
+  "t": 1793827206.8793514,
+  "metodo": "GET",
+  "url": "https://fonts.gstatic.com/s/roboto/v48/KFO7CnqEu92Fr1ME7kSn66aGLdTylUAMa3yUBA.woff2",
+  "tipo": "font",
+  "post": null
+ },
+ {
+  "t": 1793827206.9366407,
+  "metodo": "GET",
+  "url": "https://www.gstatic.com/recaptcha/releases/bSuJ2xBC8cFy7pM4Z3Hu9boH/styles__ltr.css",
+  "tipo": "stylesheet",
+  "post": null
+ },
+ {
+  "t": 1793827206.9370673,
+  "metodo": "GET",
+  "url": "https://www.gstatic.com/recaptcha/releases/bSuJ2xBC8cFy7pM4Z3Hu9boH/recaptcha__es_419.js",
+  "tipo": "script",
+  "post": null
+ },
+ {
+  "t": 1793827206.9588819,
+  "metodo": "GET",
+  "url": "https://fonts.gstatic.com/s/roboto/v48/KFO7CnqEu92Fr1ME7kSn66aGLdTylUAMa3yUBA.woff2",
+  "tipo": "font",
+  "post": null
+ },
+ {
+  "t": 1793827209.5614512,
+  "metodo": "POST",
+  "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-50PL8JC0GD&gtm=45je6b30v9208862568za208zd9208862568xf1&_p=1793827204540&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AAAAAAQ&are=1&cid=326541134.1793827205&frm=0&ngs=1&pscdl=noapi&rcb=1&sr=1400x1000&uaa=x86&uab=64&uafvl=Chromium%3B140.0.7339.16%7CNot%253DA%253FBrand%3B24.0.0.0%7CHeadlessChrome%3B140.0.7339.16&uam=&uamb=0&uap=Windows&uapv=10.0&uaw=0&ul=es-co&_s=2&tag_exp=115938466~115938469~118897920~118897930~120213116~120385422~120412528~120420416~120469145~120469153~121246026~121246034~123691370~123814185~123814946&sid=1793827202&sct=1&seg=1&dl=https%3A%2F%2Fagendamiento.dian.gov.co%2F&dt=Agendamiento%20de%20Citas&en=page_view&_ee=1&_et=7&tfd=9559",
+  "tipo": "fetch",
+  "post": null
+ },
+ {
+  "t": 1793827209.5621665,
+  "metodo": "POST",
+  "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-QD31P74WQR&gtm=45je6b30v9208862568za208zd9208862568xf1&_p=1793827204540&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AAAAAAQ&are=1&cid=326541134.1793827205&frm=0&ngs=1&pscdl=noapi&rcb=1&sr=1400x1000&uaa=x86&uab=64&uafvl=Chromium%3B140.0.7339.16%7CNot%253DA%253FBrand%3B24.0.0.0%7CHeadlessChrome%3B140.0.7339.16&uam=&uamb=0&uap=Windows&uapv=10.0&uaw=0&ul=es-co&_s=2&tag_exp=115938466~115938469~118897920~118897930~120213116~120385422~120412528~120420416~120469145~120469153~121246026~121246034~123691370~123814185~123814946&sid=1793827202&sct=1&seg=1&dl=https%3A%2F%2Fagendamiento.dian.gov.co%2F&dt=Agendamiento%20de%20Citas&en=page_view&_ee=1&_et=4&tfd=9561",
+  "tipo": "fetch",
+  "post": null
+ },
+ {
+  "t": 1793827210.5186675,
+  "metodo": "POST",
+  "url": "https://agendamiento.dian.gov.co/Player.aspx/ValidadorValidar",
+  "tipo": "xhr",
+  "post": "{nombre:'ValidadorDatos.CitasWeb',configuracion:{\"ConfiguracionServicioRestEncriptado\":\"n6ch/SV/k+dI4u2UFdFZt/brXMA9zVn5kM201dC5IYv7J3PpQUXUWqySuM59vvO2Emx2PVFvYTtaJ7Rd6sSsRSlPtbn2zrNctjIsohWmnJHvHUPuBieiBA0jm0eX62xUQ+6BFWhtYjg1ePMyZSQYL79D2dZBRPWvmBFKvDrg50aJU/0Tsgpc2oALqH1hAXFJfBsx+jJJ6QvEZWmJH+3a/g==\",\"ControlesGeolocalizacion\":[],\"FormatoCitas\":\"{cita.codigo}    {cita.fecha}    {cita.Oficina.Nombre}    img/icono1.png    img/icono2.png    img/icono3.png\",\"IdPais\":1,\"DistanciaMinima\":0,\"TopOficinasCercanas\":0,\"FormatoEncabezadoOficina\":\"\",\"FormatoOficina\":\"{0}\",\"ModoWebPlayer\":true,\"Archivo\":{\"Ruta\":\"Recursos/CitasDIAN/\",\"FechaActualizacion\":\"2026-09-09T12:19:00.5196151-05:00\"},\"TipoPolitica\":0,\"ObtenerEspecialidadesVirtuales\":false,\"ObtenerEspecialidadesPresenciales\":false,\"GenerarTurno\":false}, respuestaBase: {\"Fuente\":\"Validador\",\"Encontrado\":false,\"DetalleAdicional\":\"manejadorEncontroTiposEspecialidad\",\"ObjetosEncontrados\":[\"{\\\"CodigoCita\\\":null,\\\"CodigoCitaModificada\\\":null,\\\"Cola\\\":{\\\"IdEspecialidad\\\":\\\"0\\\",\\\"Nombre\\\":null},\\\"TipoEspecialidad\\\":{\\\"IdTipoEspecialidad\\\":0,\\\"Nombre\\\":null},\\\"Oficina\\\":{\\\"IdOficina\\\":0,\\\"Nombre\\\":null,\\\"Latitud\\\":0,\\\"Longitud\\\":0},\\\"UsuarioCliente\\\":{\\\"IdTipoCliente\\\":\\\"1\\\",\\\"IdTipoDocumento\\\":0,\\\"Nombre\\\":null,\\\"Apellido\\\":null,\\\"NumeroDocumento\\\":null,\\\"CorreoElectronico\\\":null,\\\"Celular\\\":null,\\\"Telefono\\\":null,\\\"Direccion\\\":null,\\\"IdCiudad\\\":0,\\\"IdEstado\\\":0,\\\"AceptaPoliticaDatos\\\":false},\\\"Fecha\\\":\\\"2001-01-01T17:00:00.000Z\\\",\\\"Hora\\\":\\\"2001-01-01T17:00:00.000Z\\\",\\\"IdAgenda\\\":0,\\\"Estado\\\":{\\\"IdEstado\\\":0,\\\"Nombre\\\":null},\\\"Funcionario\\\":{\\\"NombreAMostrar\\\":null,\\\"Id\\\":null},\\\"Archivo\\\":null,\\\"CamposAdicionales\\\":null,\\\"EsFlujoCitaCreacion\\\":\\\"true\\\"}\"],\"Recurso\":\"CitasDIAN\"}}"
+ },
+ {
+  "t": 1793827210.64803,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/img/PasoUno/CitaPresencial.svg",
+  "tipo": "image",
+  "post": null
+ },
+ {
+  "t": 1793827210.6481547,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/img/PasoUno/CitaVideoLlamada.svg",
+  "tipo": "image",
+  "post": null
+ },
+ {
+  "t": 1793827214.039927,
+  "metodo": "POST",
+  "url": "https://agendamiento.dian.gov.co/Player.aspx/ValidadorValidar",
+  "tipo": "xhr",
+  "post": "{nombre:'ValidadorDatos.CitasWeb',configuracion:{\"ConfiguracionServicioRestEncriptado\":\"n6ch/SV/k+dI4u2UFdFZt/brXMA9zVn5kM201dC5IYv7J3PpQUXUWqySuM59vvO2Emx2PVFvYTtaJ7Rd6sSsRSlPtbn2zrNctjIsohWmnJHvHUPuBieiBA0jm0eX62xUQ+6BFWhtYjg1ePMyZSQYL79D2dZBRPWvmBFKvDrg50aJU/0Tsgpc2oALqH1hAXFJfBsx+jJJ6QvEZWmJH+3a/g==\",\"ControlesGeolocalizacion\":[],\"FormatoCitas\":\"{cita.codigo}    {cita.fecha}    {cita.Oficina.Nombre}    img/icono1.png    img/icono2.png    img/icono3.png\",\"IdPais\":1,\"DistanciaMinima\":0,\"TopOficinasCercanas\":0,\"FormatoEncabezadoOficina\":\"\",\"FormatoOficina\":\"{0}\",\"ModoWebPlayer\":true,\"Archivo\":{\"Ruta\":\"Recursos/CitasDIAN/\",\"FechaActualizacion\":\"2026-09-09T12:19:00.5196151-05:00\"},\"TipoPolitica\":0,\"ObtenerEspecialidadesVirtuales\":false,\"ObtenerEspecialidadesPresenciales\":false,\"GenerarTurno\":false}, respuestaBase: {\"Fuente\":\"Validador\",\"Encontrado\":false,\"DetalleAdicional\":\"manejadorEncontroCategoria\",\"ObjetosEncontrados\":[\"2\"],\"Recurso\":\"CitasDIAN\"}}"
+ },
+ {
+  "t": 1793827214.181474,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/img/PasoUno/Categoria.svg",
+  "tipo": "image",
+  "post": null
+ },
+ {
+  "t": 1793827218.1958025,
+  "metodo": "POST",
+  "url": "https://agendamiento.dian.gov.co/Player.aspx/ValidadorValidar",
+  "tipo": "xhr",
+  "post": "{nombre:'ValidadorDatos.CitasWeb',configuracion:{\"ConfiguracionServicioRestEncriptado\":\"n6ch/SV/k+dI4u2UFdFZt/brXMA9zVn5kM201dC5IYv7J3PpQUXUWqySuM59vvO2Emx2PVFvYTtaJ7Rd6sSsRSlPtbn2zrNctjIsohWmnJHvHUPuBieiBA0jm0eX62xUQ+6BFWhtYjg1ePMyZSQYL79D2dZBRPWvmBFKvDrg50aJU/0Tsgpc2oALqH1hAXFJfBsx+jJJ6QvEZWmJH+3a/g==\",\"ControlesGeolocalizacion\":[],\"FormatoCitas\":\"{cita.codigo}    {cita.fecha}    {cita.Oficina.Nombre}    img/icono1.png    img/icono2.png    img/icono3.png\",\"IdPais\":1,\"DistanciaMinima\":0,\"TopOficinasCercanas\":0,\"FormatoEncabezadoOficina\":\"\",\"FormatoOficina\":\"{0}\",\"ModoWebPlayer\":true,\"Archivo\":{\"Ruta\":\"Recursos/CitasDIAN/\",\"FechaActualizacion\":\"2026-09-09T12:19:00.5196151-05:00\"},\"TipoPolitica\":0,\"ObtenerEspecialidadesVirtuales\":false,\"ObtenerEspecialidadesPresenciales\":false,\"GenerarTurno\":false}, respuestaBase: {\"Fuente\":\"Validador\",\"Encontrado\":false,\"DetalleAdicional\":\"manejadorEncontroColas\",\"ObjetosEncontrados\":[\"{\\\"CodigoCita\\\":null,\\\"CodigoCitaModificada\\\":null,\\\"Cola\\\":{\\\"IdEspecialidad\\\":\\\"0\\\",\\\"Nombre\\\":null},\\\"TipoEspecialidad\\\":{\\\"IdTipoEspecialidad\\\":2,\\\"Nombre\\\":\\\"Virtual\\\"},\\\"Oficina\\\":{\\\"IdOficina\\\":\\\"001\\\",\\\"Nombre\\\":null,\\\"Latitud\\\":0,\\\"Longitud\\\":0},\\\"UsuarioCliente\\\":{\\\"IdTipoCliente\\\":\\\"1\\\",\\\"IdTipoDocumento\\\":0,\\\"Nombre\\\":null,\\\"Apellido\\\":null,\\\"NumeroDocumento\\\":null,\\\"CorreoElectronico\\\":null,\\\"Celular\\\":null,\\\"Telefono\\\":null,\\\"Direccion\\\":null,\\\"IdCiudad\\\":0,\\\"IdEstado\\\":0,\\\"AceptaPoliticaDatos\\\":false},\\\"Fecha\\\":\\\"2001-01-01T17:00:00.000Z\\\",\\\"Hora\\\":\\\"2001-01-01T17:00:00.000Z\\\",\\\"IdAgenda\\\":0,\\\"Estado\\\":{\\\"IdEstado\\\":0,\\\"Nombre\\\":null},\\\"Funcionario\\\":{\\\"NombreAMostrar\\\":null,\\\"Id\\\":null},\\\"Archivo\\\":null,\\\"CamposAdicionales\\\":null,\\\"EsFlujoCitaCreacion\\\":\\\"true\\\"}\",\"Nombre\",\"1\",\"13\",\"2\"],\"Recurso\":\"CitasDIAN\"}}"
+ },
+ {
+  "t": 1793827219.0399625,
+  "metodo": "GET",
+  "url": "https://agendamiento.dian.gov.co/Recursos/CitasDIAN/img/Modal/icon_close_modal.svg",
+  "tipo": "image",
+  "post": null
+ }
+]

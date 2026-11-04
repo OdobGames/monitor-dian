@@ -1,0 +1,448 @@
+[
+ {
+  "tag": "span",
+  "texto": "Agendamiento de citas",
+  "propio": "Agendamiento de citas",
+  "attrs": {},
+  "clicable": false
+ },
+ {
+  "tag": "div",
+  "texto": "",
+  "propio": "",
+  "attrs": {
+   "class": "d-flex justify-content-start align-items-center"
+  },
+  "clicable": true
+ },
+ {
+  "tag": "div",
+  "texto": "",
+  "propio": "",
+  "attrs": {
+   "tipo": "Control",
+   "id": "control_34",
+   "pantalla": "_NavPaginaDIAN",
+   "nombre": "btnVolver",
+   "class": "boton"
+  },
+  "clicable": true
+ },
+ {
+  "tag": "div",
+  "texto": "",
+  "propio": "",
+  "attrs": {
+   "tipo": "Control",
+   "id": "control_35",
+   "pantalla": "_NavPaginaDIAN",
+   "nombre": "btnPaginaActual",
+   "class": "boton"
+  },
+  "clicable": true
+ },
+ {
+  "tag": "span",
+  "texto": "Agendamiento de citas",
+  "propio": "Agendamiento de citas",
+  "attrs": {
+   "class": "txtTituloAgendamiento"
+  },
+  "clicable": false
+ },
+ {
+  "tag": "span",
+  "texto": "Tipo de persona, cita, servicio y trámite",
+  "propio": "Tipo de persona, cita, servicio y trámite",
+  "attrs": {
+   "class": "txtTituloPaso"
+  },
+  "clicable": false
+ },
+ {
+  "tag": "span",
+  "texto": "Seleccione el tipo de persona",
+  "propio": "Seleccione el tipo de persona",
+  "attrs": {
+   "class": "txtInformacionPaso"
+  },
+  "clicable": false
+ },
+ {
+  "tag": "div",
+  "texto": "Persona\nNatural\nPersona\nJurídica",
+  "propio": "",
+  "attrs": {
+   "tipo": "Control",
+   "id": "control_199",
+   "pantalla": "PasoUno",
+   "nombre": "TipoPersona",
+   "class": "contenedorTipoPersona contenedorListaBotones"
+  },
+  "clicable": true
+ },
+ {
+  "tag": "div",
+  "texto": "Persona\nNatural",
+  "propio": "",
+  "attrs": {
+   "class": "boton btnTipoPersona",
+   "llave": "1"
+  },
+  "clicable": true
+ },
+ {
+  "tag": "span",
+  "texto": "Persona\nNatural",
+  "propio": "Persona Natural",
+  "attrs": {
+   "style": "display: block; transition: 0.75s; font-family: \"Work Sans\"; font-size: 16px; color: rgb(43, 45, 69); font-weight: 700; font-style: normal; line-height: 18px; text-shadow: none; box-shadow: none;"
+  },
+  "clicable": false
+ },
+ {
+  "tag": "div",
+  "texto": "Persona\nJurídica",
+  "propio": "",
+  "attrs": {
+   "class": "boton btnTipoPersona",
+   "llave": "2"
+  },
+  "clicable": true
+ },
+ {
+  "tag": "span",
+  "texto": "Persona\nJurídica",
+  "propio": "Persona Jurídica",
+  "attrs": {
+   "style": "display: block; transition: 0.75s; font-family: \"Work Sans\"; font-size: 16px; color: rgb(43, 45, 69); font-weight: 700; font-style: normal; line-height: 18px; text-shadow: none; box-shadow: none;"
+  },
+  "clicable": false
+ },
+ {
+  "tag": "div",
+  "texto": "Anterior\nSiguiente",
+  "propio": "",
+  "attrs": {
+   "class": "contenido-botones"
+  },
+  "clicable": true
+ },
+ {
+  "tag": "div",
+  "texto": "Anterior",
+  "propio": "",
+  "attrs": {
+   "tipo": "Control",
+   "id": "control_207",
+   "pantalla": "PasoUno",
+   "nombre": "btnAnterior",
+   "class": "btnAnteriorPagina boton"
+  },
+  "clicable": true
+ },
+ {
+  "tag": "div",
+  "texto": "",
+  "propio": "",
+  "attrs": {
+   "class": "contentImgBtnAnterior"
+  },
+  "clicable": true
+ },
+ {
+  "tag": "span",
+  "texto": "Anterior",
+  "propio": "Anterior",
+  "attrs": {
+   "style": "transition: 0.75s; font-family: \"Work Sans\"; font-size: 16px; color: rgb(43, 45, 69); font-weight: normal; font-style: normal; line-height: 18px; text-shadow: none; box-shadow: none;"
+  },
+  "clicable": false
+ },
+ {
+  "tag": "div",
+  "texto": "Siguiente",
+  "propio": "",
+  "attrs": {
+   "tipo": "Control",
+   "id": "control_206",
+   "pantalla": "PasoUno",
+   "nombre": "btnSiguienteBlock",
+   "class": "btnSiguientePaginaBlock boton"
+  },
+  "clicable": true
+ },
+ {
+  "tag": "span",
+  "texto": "Siguiente",
+  "propio": "Siguiente",
+  "attrs": {
+   "style": "transition: 0.75s; font-family: \"Work Sans\"; font-size: 16px; color: rgb(43, 45, 69); font-weight: normal; font-style: normal; line-height: 18px; text-shadow: none; box-shadow: none;"
+  },
+  "clicable": false
+ },
+ {
+  "tag": "div",
+  "texto": "",
+  "propio": "",
+  "attrs": {
+   "class": "contentImgBtnSiguiente"
+  },
+  "clicable": true
+ },
+ {
+  "tag": "div",
+  "texto": "Dirección de Impuestos y Aduanas Nacionales\nNIT: 800.197.268-4\nDirección: Sede principal | Bogotá, Nivel Central, carrera 8 Nº 6C - 38 Edificio San Agustín\nCódi",
+  "propio": "",
+  "attrs": {
+   "class": "d-flex justify-content-center align-items-center footer"
+  },
+  "clicable": true
+ },
+ {
+  "tag": "span",
+  "texto": "Dirección de Impuestos y Aduanas Nacionales",
+  "propio": "Dirección de Impuestos y Aduanas Nacionales",
+  "attrs": {},
+  "clicable": false
+ },
+ {
+  "tag": "span",
+  "texto": "NIT: 800.197.268-4",
+  "propio": "NIT: 800.197.268-4",
+  "attrs": {},
+  "clicable": false
+ },
+ {
+  "tag": "span",
+  "texto": "Dirección: Sede principal | Bogotá, Nivel Central, carrera 8 Nº 6C - 38 Edificio San Agustín",
+  "propio": "Dirección: Sede principal | Bogotá, Nivel Central, carrera 8 Nº 6C - 38 Edificio San Agustín",
+  "attrs": {},
+  "clicable": false
+ },
+ {
+  "tag": "span",
+  "texto": "Código Postal: 111711",
+  "propio": "Código Postal: 111711",
+  "attrs": {},
+  "clicable": false
+ },
+ {
+  "tag": "span",
+  "texto": "Horario Contact Center: Lunes a Viernes 8:00 a.m. a 7:00 p.m. y Sábados de 8:00 a.m. a 12:00 p.m.",
+  "propio": "Horario Contact Center: Lunes a Viernes 8:00 a.m. a 7:00 p.m. y Sábados de 8:00 a.m. a 12:00 p.m.",
+  "attrs": {},
+  "clicable": false
+ },
+ {
+  "tag": "div",
+  "texto": "",
+  "propio": "",
+  "attrs": {
+   "tipo": "Control",
+   "id": "control_9",
+   "pantalla": "_Footer",
+   "nombre": "btnTwitter",
+   "title": "TikTok",
+   "class": "boton"
+  },
+  "clicable": true
+ },
+ {
+  "tag": "div",
+  "texto": "",
+  "propio": "",
+  "attrs": {
+   "tipo": "Control",
+   "id": "control_10",
+   "pantalla": "_Footer",
+   "nombre": "btnYoutube",
+   "title": "Youtube",
+   "class": "boton"
+  },
+  "clicable": true
+ },
+ {
+  "tag": "div",
+  "texto": "",
+  "propio": "",
+  "attrs": {
+   "tipo": "Control",
+   "id": "control_8",
+   "pantalla": "_Footer",
+   "nombre": "btnLinkedin",
+   "title": "Linkedin",
+   "class": "boton"
+  },
+  "clicable": true
+ },
+ {
+  "tag": "div",
+  "texto": "",
+  "propio": "",
+  "attrs": {
+   "tipo": "Control",
+   "id": "control_6",
+   "pantalla": "_Footer",
+   "nombre": "btnFacebook",
+   "title": "Facebook",
+   "class": "boton"
+  },
+  "clicable": true
+ },
+ {
+  "tag": "div",
+  "texto": "",
+  "propio": "",
+  "attrs": {
+   "tipo": "Control",
+   "id": "control_7",
+   "pantalla": "_Footer",
+   "nombre": "btnInstagram",
+   "title": "Instagram",
+   "class": "boton"
+  },
+  "clicable": true
+ },
+ {
+  "tag": "div",
+  "texto": "",
+  "propio": "",
+  "attrs": {
+   "tipo": "Control",
+   "id": "control_11",
+   "pantalla": "_Footer",
+   "nombre": "btnTikTok",
+   "title": "TikTok",
+   "class": "boton"
+  },
+  "clicable": true
+ },
+ {
+  "tag": "span",
+  "texto": "Contacto",
+  "propio": "Contacto",
+  "attrs": {},
+  "clicable": false
+ },
+ {
+  "tag": "span",
+  "texto": "Contact Center",
+  "propio": "Contact Center",
+  "attrs": {},
+  "clicable": false
+ },
+ {
+  "tag": "span",
+  "texto": "57 601 489 9000 Línea de Contact Center atención de Impuestos",
+  "propio": "57 601 489 9000 Línea de Contact Center atención de Impuestos",
+  "attrs": {},
+  "clicable": false
+ },
+ {
+  "tag": "span",
+  "texto": "57 601 794 8880 Línea de Contact Center atención de Aduanas",
+  "propio": "57 601 794 8880 Línea de Contact Center atención de Aduanas",
+  "attrs": {},
+  "clicable": false
+ },
+ {
+  "tag": "span",
+  "texto": "57 601 794 8883 Línea Centro Nacional de Cobro",
+  "propio": "57 601 794 8883 Línea Centro Nacional de Cobro",
+  "attrs": {},
+  "clicable": false
+ },
+ {
+  "tag": "span",
+  "texto": "Servicio en Línea de Contacto",
+  "propio": "Servicio en Línea de Contacto",
+  "attrs": {},
+  "clicable": false
+ },
+ {
+  "tag": "a",
+  "texto": "PQSR y Denuncias | Puntos de contacto",
+  "propio": "",
+  "attrs": {
+   "target": "_blank",
+   "href": "https://www.dian.gov.co/atencionciudadano/PQSRD/Paginas/Inicio.aspx"
+  },
+  "clicable": true
+ },
+ {
+  "tag": "span",
+  "texto": "PQSR y Denuncias | Puntos de contacto",
+  "propio": "PQSR y Denuncias | Puntos de contacto",
+  "attrs": {},
+  "clicable": false
+ },
+ {
+  "tag": "a",
+  "texto": "Política de Seguridad de la Información",
+  "propio": "",
+  "attrs": {
+   "target": "_blank",
+   "href": "https://www.dian.gov.co/Documents/POLITICA_GENERAL_DE_SEGURIDAD_Y_PRIVACIDAD_DE_LA_INFORMACION.pdf"
+  },
+  "clicable": true
+ },
+ {
+  "tag": "span",
+  "texto": "Política de Seguridad de la Información",
+  "propio": "Política de Seguridad de la Información",
+  "attrs": {},
+  "clicable": false
+ },
+ {
+  "tag": "a",
+  "texto": "Políticas de privacidad y términos de uso",
+  "propio": "",
+  "attrs": {
+   "target": "_blank",
+   "href": "https://www.dian.gov.co/Paginas/Privacidad.aspx"
+  },
+  "clicable": true
+ },
+ {
+  "tag": "span",
+  "texto": "Políticas de privacidad y términos de uso",
+  "propio": "Políticas de privacidad y términos de uso",
+  "attrs": {},
+  "clicable": false
+ },
+ {
+  "tag": "a",
+  "texto": "Política de Tratamiento de Datos Personales",
+  "propio": "",
+  "attrs": {
+   "target": "_blank",
+   "href": "https://www.dian.gov.co/normatividad/Normatividad/Circular-000001-de-25-01-2019.pdf"
+  },
+  "clicable": true
+ },
+ {
+  "tag": "span",
+  "texto": "Política de Tratamiento de Datos Personales",
+  "propio": "Política de Tratamiento de Datos Personales",
+  "attrs": {},
+  "clicable": false
+ },
+ {
+  "tag": "a",
+  "texto": "Notificaciones Judiciales | Mapa del sitio",
+  "propio": "",
+  "attrs": {
+   "target": "_blank",
+   "href": "https://www.dian.gov.co/atencionciudadano/contactenos/Paginas/puntosdecontacto.aspx"
+  },
+  "clicable": true
+ },
+ {
+  "tag": "span",
+  "texto": "Notificaciones Judiciales | Mapa del sitio",
+  "propio": "Notificaciones Judiciales | Mapa del sitio",
+  "attrs": {},
+  "clicable": false
+ }
+]
