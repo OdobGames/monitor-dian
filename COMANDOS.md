@@ -33,16 +33,19 @@ gh run download                          # bajar las capturas de la ultima corri
 
 ## Cuando revisa
 
-Cada 30 minutos entre las 5:00 y las 21:00, hora de Colombia. El cron de GitHub
-no es puntual: con la cola cargada una corrida puede arrancar entre 5 y 20
-minutos tarde.
+Desde la v6, cada ~3 minutos entre las 5:00 y las 21:00, hora de Colombia. Cada
+corrida vigila en bucle casi 6 horas y la siguiente queda en cola, asi que no
+depende de la puntualidad del cron. Las corridas "canceladas" que se ven en
+Actions son las que sobran en la cola: es normal.
 
-Para cambiar la franja o la frecuencia se edita la linea `cron` de
-`.github/workflows/dian.yml`. Va en UTC, y Colombia es UTC-5 todo el ano.
+La frecuencia se cambia con `DIAN_INTERVALO_SEG` y la franja con
+`DIAN_HORA_INICIO` / `DIAN_HORA_FIN`, en `.github/workflows/dian.yml`.
 
 ## Configuracion
 
-Los tres datos sensibles son secretos del repositorio, no estan en el codigo:
+Los datos sensibles son secretos del repositorio, no estan en el codigo. Los
+de los avisos al celular (ntfy, Telegram, llamada, WhatsApp) estan explicados
+en LEEME.md:
 
 ```bash
 gh secret list                                    # cuales hay (no muestra el valor)
@@ -54,6 +57,10 @@ gh secret set DIAN_CLAVE_APP --body "clave nueva" # cambiar uno
 | `DIAN_CORREO_DESTINO` | a donde llega el aviso |
 | `DIAN_CORREO_ORIGEN` | desde donde sale |
 | `DIAN_CLAVE_APP` | clave de aplicacion de Google, no la del correo |
+| `DIAN_NTFY_TOPIC` | tema de ntfy para el push al celular |
+| `DIAN_TELEGRAM_TOKEN`, `DIAN_TELEGRAM_CHAT_ID` | bot de Telegram |
+| `DIAN_TWILIO_SID`, `DIAN_TWILIO_TOKEN`, `DIAN_TWILIO_FROM`, `DIAN_TWILIO_TO` | llamada telefonica |
+| `DIAN_WHATSAPP_PHONE`, `DIAN_WHATSAPP_APIKEY` | WhatsApp por CallMeBot |
 
 La modalidad y el horario van como variables normales dentro del workflow
 (`DIAN_MODALIDAD`, `DIAN_HORA_INICIO`, `DIAN_HORA_FIN`).
@@ -72,9 +79,9 @@ $env:DIAN_CORREO_DESTINO = "tu_correo@gmail.com"
 $env:DIAN_CORREO_ORIGEN  = "tu_correo@gmail.com"
 $env:DIAN_CLAVE_APP      = "la clave de aplicacion"
 
-python check_dian_v5.py --test-correo         # comprobar que el correo sale
+python check_dian_v5.py --test-avisos         # comprobar que llegan los avisos
 python check_dian_v5.py --una-vez --debug     # una revision con ventana visible
-python check_dian_v5.py --vigilar             # bucle continuo, dejarlo abierto
+python check_dian_v5.py --vigilar --abrir-navegador  # bucle, modo asistido
 python check_dian_v5.py --limpiar             # solo limpiar y salir
 ```
 

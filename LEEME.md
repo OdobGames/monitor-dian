@@ -1,135 +1,166 @@
-# Monitor de citas DIAN
+# Monitor de citas DIAN (v6)
 
-Vigila la pagina de agendamiento de la DIAN (Persona Natural → Videoatención →
-Devoluciones) y avisa por correo en cuanto deja de aparecer el mensaje de "sin
-cupos". Usa Playwright con Chromium en modo invisible.
+Vigila la página de agendamiento de la DIAN (Agendar cita > Persona Natural >
+Presencial o Videoatención > Devoluciones) y te avisa al celular en cuanto deja
+de aparecer el mensaje "No se encontraron especialidades".
 
-Se puede correr de tres formas: en GitHub Actions (gratis, sin maquina), en una
-VM propia (puntual al segundo), o en este mismo PC. Los pasos de cada una estan
-en [MIGRAR.md](MIGRAR.md).
+## Qué cambió en la v6
 
-> La clave de aplicacion de Google ya **no** va dentro de `check_dian_v5.py`.
-> Se lee de la variable de entorno `DIAN_CLAVE_APP` (en la VM, de
-> `/opt/dian/dian.env` con permisos 600; en GitHub, de un secreto del
-> repositorio). Sin ella el monitor revisa igual, pero no manda correo.
+| Antes (v5) | Ahora (v6) |
+|---|---|
+| Revisaba cada 30 min, y GitHub arrancaba 5 a 20 min tarde | Revisa cada ~3 min, en bucle continuo |
+| Solo videoatención | Presencial y videoatención en la misma pasada |
+| Solo correo | Push al celular con alarma (ntfy), Telegram, llamada telefónica, WhatsApp y correo, todos a la vez |
+| El aviso decía "entra a la página" | El aviso trae un botón que abre la página directamente |
+| No sabías si seguía vivo | Un aviso suave cada día a las 8 a.m. confirma que sigue vigilando |
+| Falsa alarma si la página fallaba | Distingue "cita disponible" (con llamada) de "posible cita" (sin llamada) |
+| | Modo PC asistido: la página aparece en tu pantalla ya parada en la lista de citas |
+| | Guarda el HTML de la pantalla de cupos para automatizar la reserva después |
 
-## En este PC (Windows)
+## 1. Configura al menos un aviso al celular
 
-```powershell
-pip install playwright
-playwright install chromium
+Cada canal es opcional y se activa solo con poner sus datos. Recomendado:
+**ntfy** (gratis, 2 minutos) y, si quieres que te despierte, **la llamada**.
 
-$env:DIAN_CLAVE_APP = "la clave de aplicacion de Google"
+### ntfy (recomendado, gratis)
 
-python check_dian_v5.py --test-correo        # comprobar que el correo sale
-python check_dian_v5.py --una-vez --debug    # una revision con ventana visible
-python check_dian_v5.py --vigilar            # bucle continuo, hay que dejarlo abierto
-```
+1. Instala la app **ntfy** en el celular (Play Store o App Store).
+2. Inventa un nombre de tema largo y difícil de adivinar, por ejemplo
+   `dian-oscar-8f3k29xq`. Quien sepa el nombre puede leer los avisos, así que
+   no uses algo obvio.
+3. En la app: botón **+**, escribe ese nombre y suscríbete.
+4. Ponlo en `DIAN_NTFY_TOPIC`.
+5. Para que suene aunque el celular esté en silencio (Android): en la app,
+   abre el tema > Configuración de notificaciones > prioridad máxima y permite
+   que ignore el modo No molestar.
 
-## En GitHub Actions (gratis, no depende de ninguna maquina)
+Los avisos de cita llegan con prioridad máxima y un botón **Abrir agendamiento
+DIAN**: tocas y quedas en la página.
 
-El workflow esta en `.github/workflows/dian.yml`: revisa cada 30 minutos dentro
-del horario, sin VM que mantener. La contrapartida es que el cron de GitHub no
-es puntual — una corrida puede arrancar entre 5 y 20 minutos tarde. El montaje
-completo esta en [MIGRAR.md](MIGRAR.md).
+### Telegram (gratis)
 
-## En una VM propia (puntual al segundo)
+1. En Telegram habla con **@BotFather**, escribe `/newbot` y sigue los pasos.
+   Te da un token: va en `DIAN_TELEGRAM_TOKEN`.
+2. Escríbele cualquier cosa a tu bot nuevo.
+3. Abre en el navegador `https://api.telegram.org/bot<TOKEN>/getUpdates` y
+   busca `"chat":{"id":...}`. Ese número va en `DIAN_TELEGRAM_CHAT_ID`.
 
-Sirve cualquier Ubuntu 24.04 con systemd, x86-64 o ARM. Desde esta carpeta, en
-PowerShell:
+El aviso trae botón para abrir la página y la captura de lo que vio el monitor.
 
-```powershell
-powershell -ExecutionPolicy Bypass -File .\subir-a-vm.ps1
-```
+### Llamada telefónica (Twilio, de pago)
 
-Copia el codigo a la VM y ejecuta `vm/install.sh`, que:
+La única opción que te despierta seguro. Cuesta centavos de dólar por llamada.
 
-1. Si la maquina tiene menos de 2 GB de RAM, le crea 2 GB de intercambio.
-   Chromium pide unos 600 MB en el pico; sin intercambio, en una maquina de 1 GB
-   el kernel empieza a matar procesos al azar.
-2. Instala `python3-venv` (nada mas; **no** hace `apt upgrade`, para no tocar lo
-   que ya corre en la maquina).
-3. Crea el usuario de sistema `dian` y la carpeta `/opt/dian`, aparte de todo lo
-   demas.
-4. Monta un entorno virtual de Python propio y baja Chromium dentro de
-   `/opt/dian/browsers` (no se mezcla con nada del servidor).
-5. Instala un servicio y un temporizador de systemd que lanzan **una** revision
-   cada 30 minutos y terminan.
+1. Crea cuenta en twilio.com y compra un número (o usa el de prueba).
+2. `DIAN_TWILIO_SID` y `DIAN_TWILIO_TOKEN`: los ves en la consola de Twilio.
+3. `DIAN_TWILIO_FROM`: tu número de Twilio. `DIAN_TWILIO_TO`: tu celular, con
+   `+57` adelante.
 
-Las revisiones caen en **hora cerrada**: 2:00, 2:30, 3:00, 3:30… El temporizador
-va sin desfase aleatorio y con precision de un segundo.
+En cuenta de prueba solo puede llamar a números verificados y antes del mensaje
+suena un aviso de Twilio. Solo llama cuando la cita está confirmada, y como
+mucho una vez cada 30 minutos.
 
-La lista completa de comandos esta en [COMANDOS.md](COMANDOS.md).
+### WhatsApp (CallMeBot, gratis, no oficial)
 
-### Que garantiza que no se lleve la maquina por delante
+Manda un mensaje de WhatsApp, no una llamada: WhatsApp no deja que un programa
+te llame. Sigue las instrucciones de callmebot.com para obtener tu apikey y
+ponla en `DIAN_WHATSAPP_APIKEY`, con tu número en `DIAN_WHATSAPP_PHONE`.
 
-Todo esta en `vm/dian-monitor.service`. Los topes estan calculados para una
-maquina chica (1 vCPU, 1 GB de RAM), que es lo minimo donde esto corre bien:
+### Correo (Gmail)
 
-| Tope | Valor | Para que |
-|---|---|---|
-| `Nice=10`, `IOSchedulingClass=idle` | prioridad baja | si algo mas corre en la maquina, va primero |
-| `MemoryHigh=600M` | freno suave | el kernel lo presiona antes de llegar al tope duro |
-| `MemoryMax=850M` | tope duro | si Chromium se desboca, lo mata a el y nada mas |
-| `RuntimeMaxSec=600` | 10 min | una revision colgada se mata sola, con hijos y todo |
-| `PrivateTmp=yes` | `/tmp` propio | la basura temporal desaparece al terminar |
-| `ProtectSystem=strict` | solo escribe en `/opt/dian` | no puede tocar nada mas del sistema |
+Igual que antes: `DIAN_CORREO_DESTINO`, `DIAN_CORREO_ORIGEN` y `DIAN_CLAVE_APP`
+(clave de aplicación de Google, myaccount.google.com/apppasswords).
 
-Ademas es un proceso que arranca, trabaja ~1 minuto y muere. Entre revisiones no
-queda nada corriendo.
-
-### Limpieza automatica
-
-Al principio de **cada** ejecucion, `check_dian_v5.py` hace:
-
-- Recorta `monitor.log` si pasa de 1 MB (deja las ultimas 3000 lineas).
-- Borra las capturas de `salida/` con mas de 3 dias, y si aun asi la carpeta
-  pasa de 50 MB, va borrando de la mas vieja.
-- Elimina los perfiles y volcados que Chromium deja en la carpeta temporal
-  cuando una corrida muere a medias (solo carpetas con nombre inequivoco de
-  Playwright/Chromium y con mas de una hora).
-- En Linux, mata navegadores huerfanos de corridas anteriores — solo procesos
-  del propio usuario `dian` y cuyo ejecutable esta dentro de
-  `/opt/dian/browsers`. Nunca toca otro proceso de la maquina.
-
-Los limites se pueden cambiar en `/opt/dian/dian.env`
-(`DIAN_MAX_LOG_BYTES`, `DIAN_DIAS_CAPTURAS`, `DIAN_MAX_SALIDA_MB`).
-
-### Comandos utiles en la VM
+### Probar los avisos
 
 ```bash
-systemctl list-timers dian-monitor.timer     # cuando toca la proxima
-sudo systemctl start dian-monitor.service    # forzar una revision ahora
-sudo tail -f /opt/dian/monitor.log           # el registro del monitor
-journalctl -u dian-monitor -n 50 --no-pager  # lo que vio systemd
-sudo systemctl disable --now dian-monitor.timer   # apagarlo
-
-# probar el correo (o cualquier otra opcion) con el mismo entorno del servicio:
-sudo systemd-run --wait --collect --pipe -p User=dian \
-  -p EnvironmentFile=/opt/dian/dian.env \
-  -p Environment=PLAYWRIGHT_BROWSERS_PATH=/opt/dian/browsers \
-  -p WorkingDirectory=/opt/dian \
-  /opt/dian/venv/bin/python /opt/dian/check_dian_v5.py --test-correo
+python check_dian_v5.py --test-avisos                # todos menos la llamada
+python check_dian_v5.py --test-avisos --con-llamada  # incluida la llamada
 ```
 
-`/opt/dian/dian.env` tiene permisos 600 y dueño `dian`: leerlo o pasarlo con
-`grep`/`env` desde otro usuario falla. Por eso el rodeo con `systemd-run`.
+## 2. Dónde correrlo
 
-## Configuracion
+### En GitHub Actions (gratis, sin máquina)
 
-En la VM se edita `/opt/dian/dian.env` (permisos 600 porque lleva la clave) y
-luego `sudo systemctl restart dian-monitor.timer`. En GitHub Actions son
-secretos del repositorio. En Windows, variables de entorno de la sesion.
+El workflow `.github/workflows/dian.yml` vigila en bucle, una revisión cada ~3
+minutos, de 5:00 a 21:00 hora de Colombia. Cada corrida dura casi 6 horas y la
+siguiente queda en cola, así que no hay huecos.
 
-| Variable | Por defecto | Que hace |
+Los datos de los avisos van como **secretos** del repositorio: Settings >
+Secrets and variables > Actions > New repository secret. Usa exactamente los
+mismos nombres (`DIAN_NTFY_TOPIC`, `DIAN_TELEGRAM_TOKEN`, etc.).
+
+Para arrancarlo: pestaña **Actions** > Monitor de citas DIAN > **Run workflow**.
+
+Ojo: los términos de GitHub piden que Actions se use para trabajo del propio
+software del repositorio. Un monitor que corre todo el día es zona gris y
+GitHub podría deshabilitarlo. Si eso pasa, usa el PC o una VM.
+
+### En tu PC con Windows (modo asistido, el más rápido para agendar)
+
+1. Instala Python y luego:
+
+   ```powershell
+   pip install playwright
+   ```
+
+2. Copia `vm/dian.env.example` como `dian.env` en esta carpeta y llena tus
+   datos. Pon `DIAN_NAVEGADOR_CANAL=msedge` para usar el Edge que ya tienes
+   (así no hace falta `playwright install`).
+3. Doble clic en **`vigilar-pc.bat`**.
+
+El navegador trabaja fuera de la pantalla. Cuando hay cupos:
+
+- te llegan los avisos al celular,
+- suena una alarma en el PC,
+- la ventana aparece al frente **ya parada en la lista de citas de
+  Devoluciones**. Solo escoges la cita, llenas tus datos y confirmas.
+
+Cuando cierras esa ventana, sigue vigilando. Si no estabas y nadie la cierra, a
+los 20 minutos la cierra sola y sigue.
+
+### En una VM propia
+
+Igual que antes (`subir-a-vm.ps1` y `vm/install.sh`). Ahora el temporizador
+dispara cada 3 minutos. Los datos de avisos van en `/opt/dian/dian.env`.
+
+## Por qué no reserva la cita solo
+
+Nunca hemos visto las pantallas que vienen después de "Devoluciones" cuando sí
+hay cupos: con cupos en cero la página no las muestra. Automatizar a ciegas
+podría reservar la modalidad o sede equivocada. Por eso, cuando haya cupos, el
+monitor guarda el HTML de esa pantalla (`salida/cupos_*.html`, y en GitHub en
+**Artifacts**). Con ese archivo se puede programar la reserva completa para la
+siguiente vez.
+
+## Configuración
+
+| Variable | Por defecto | Qué hace |
 |---|---|---|
-| `DIAN_CORREO_DESTINO` | — (obligatoria) | a donde llega el aviso |
-| `DIAN_CORREO_ORIGEN` | — (obligatoria) | desde donde sale |
-| `DIAN_CLAVE_APP` | — | clave de aplicacion de Google, no la del correo. Obligatoria para que salga el aviso |
-| `DIAN_MODALIDAD` | videoatencion | `videoatencion` o `presencial` |
-| `DIAN_HORA_INICIO` / `DIAN_HORA_FIN` | 5 / 21 | franja de vigilancia |
+| `DIAN_MODALIDAD` | `ambas` | `ambas`, `presencial` o `videoatencion` |
+| `DIAN_INTERVALO_SEG` | `180` | segundos entre el inicio de una revisión y la siguiente |
+| `DIAN_HORA_INICIO` / `DIAN_HORA_FIN` | `5` / `21` | franja de vigilancia, hora de Colombia |
+| `DIAN_COOLDOWN_AVISO_MIN` | `10` | no repite avisos de la misma racha de cupos antes de esto |
+| `DIAN_COOLDOWN_LLAMADA_MIN` | `30` | mínimo entre llamadas |
+| `DIAN_LATIDO` / `DIAN_HORA_LATIDO` | `1` / `8` | aviso diario de que sigue vivo (`0` lo apaga) |
+| `DIAN_ESPERA_ASISTIDO_MIN` | `20` | modo PC: cuánto deja la página en pantalla esperándote |
+| `DIAN_NAVEGADOR_CANAL` | vacío | `msedge` o `chrome` para usar el navegador instalado |
 
-## Codigos de salida
+## Códigos de salida
 
-`0` hay cupos · `1` sin cupos · `2` error de la pagina · `3` fuera de horario.
-El servicio de systemd trata los cuatro como normales.
+`--una-vez`: `0` hay cupos, `1` sin cupos, `2` error de la página, `3` fuera de
+horario. `--vigilar`: `0` terminó bien, `2` ninguna revisión pudo leer la página.
+
+## Comandos
+
+```bash
+python check_dian_v5.py --test-avisos                 # probar avisos
+python check_dian_v5.py --una-vez --debug             # una revisión con ventana visible
+python check_dian_v5.py --vigilar                     # bucle continuo
+python check_dian_v5.py --vigilar --abrir-navegador   # bucle en el PC, modo asistido
+python check_dian_v5.py --una-vez --modalidad presencial
+python check_dian_v5.py --limpiar                     # solo limpiar y salir
+```
+
+La guía de VM y de mudanza sigue en [MIGRAR.md](MIGRAR.md) y la chuleta de
+GitHub en [COMANDOS.md](COMANDOS.md).

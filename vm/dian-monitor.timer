@@ -1,11 +1,11 @@
 [Unit]
-Description=Dispara el monitor de citas DIAN cada 30 minutos
+Description=Dispara el monitor de citas DIAN cada 3 minutos
 
 [Timer]
-# En punto y y media, todo el dia: 00:00, 00:30, 01:00, 01:30... El propio
-# script sale sin hacer nada fuera del horario de vigilancia
-# (--respetar-horario), asi que no hace falta afinar aqui.
-OnCalendar=*-*-* *:00,30:00
+# Cada 3 minutos, todo el dia. El propio script sale sin hacer nada fuera del
+# horario de vigilancia (--respetar-horario). Si una revision lenta sigue
+# corriendo cuando toca la siguiente, systemd no lanza otra encima.
+OnCalendar=*-*-* *:00/3:00
 # Sin desfase aleatorio y con precision al segundo: dispara en la hora cerrada.
 RandomizedDelaySec=0
 AccuracySec=1s

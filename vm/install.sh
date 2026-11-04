@@ -114,18 +114,18 @@ systemctl restart dian-monitor.timer
 
 cat <<FIN
 
-  Listo. El monitor revisa cada 30 minutos, entre las 5:00 y las 21:00 (hora de
-  Colombia), y avisa por correo si aparecen cupos.
+  Listo. El monitor revisa cada 3 minutos, entre las 5:00 y las 21:00 (hora de
+  Colombia), y avisa por los canales configurados en /opt/dian/dian.env.
 
   Comprobar        : systemctl list-timers dian-monitor.timer
   Forzar una ahora : sudo systemctl start dian-monitor.service
   Ver el registro  : sudo tail -f /opt/dian/monitor.log
   Ver systemd      : journalctl -u dian-monitor -n 50 --no-pager
-  Probar el correo : sudo systemd-run --wait --collect --pipe -p User=dian \\
+  Probar avisos    : sudo systemd-run --wait --collect --pipe -p User=dian \\
                        -p EnvironmentFile=/opt/dian/dian.env \\
                        -p Environment=PLAYWRIGHT_BROWSERS_PATH=/opt/dian/browsers \\
                        -p Environment=TZ=America/Bogota -p WorkingDirectory=/opt/dian \\
-                       /opt/dian/venv/bin/python /opt/dian/check_dian_v5.py --test-correo
+                       /opt/dian/venv/bin/python /opt/dian/check_dian_v5.py --test-avisos
   Apagarlo         : sudo systemctl disable --now dian-monitor.timer
 
 FIN
