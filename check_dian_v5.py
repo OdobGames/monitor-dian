@@ -41,6 +41,7 @@ import argparse
 import base64
 import json
 import os
+import re
 import shutil
 import smtplib
 import sys
@@ -58,7 +59,7 @@ from pathlib import Path
 
 from playwright.sync_api import sync_playwright, TimeoutError as PWTimeout
 
-VERSION = "6.0"
+VERSION = "6.2"
 CARPETA = Path(__file__).resolve().parent
 
 
@@ -125,6 +126,12 @@ HORA_FIN = int(_env("DIAN_HORA_FIN", "21"))
 
 # Modalidades: "ambas", "videoatencion", "presencial" o lista separada por comas
 MODALIDAD = _env("DIAN_MODALIDAD", "ambas")
+
+# Ciudad (seccional) que sirve. Las demas solo generan un aviso suave.
+CIUDAD = _env("DIAN_CIUDAD", "Bogota")
+RE_CIUDAD = re.compile(re.escape(CIUDAD[:5]).replace("o", "[oó]"), re.I)
+AVISAR_OTRAS = _env("DIAN_AVISAR_OTRAS", "1") not in ("0", "no", "false", "")
+COOLDOWN_OTRAS_MIN = int(_env("DIAN_COOLDOWN_OTRAS_MIN", "120"))
 
 # Navegador: por defecto el Chromium de Playwright. En Windows se puede usar el
 # Edge o el Chrome ya instalados con DIAN_NAVEGADOR_CANAL=msedge o chrome.
@@ -649,6 +656,36 @@ def _recorrer(page, modalidad: str, debug: bool) -> dict:
             html.write_text(page.content(), encoding="utf-8")
         except Exception:
             html = None
+
+        # Visto en el codigo de la pagina (2026-11-04): cuando hay cupos, en el
+        # Paso 1 aparece una lista desplegable de servicios; con "Siguiente" se
+        # pasa al Paso 2, donde otra lista trae las ciudades (seccionales) con
+        # agenda. Se recorre hasta ahi para saber si Bogota esta entre ellas.
+        # El Paso 3 (datos, captcha y documentos) no se toca.
+        ciudades = None
+        try:
+            ciudades = _leer_ciudades(page, debug=debug, modalidad=modalidad)
+        except Exception as e:
+            log(f"   no se pudo leer la lista de ciudades ({type(e).__name__}: "
+                f"{str(e).splitlines()[0][:120] if str(e) else ''})")
+        if ciudades is not None:
+            try:
+                page.screenshot(path=str(captura), full_page=True)
+                html.write_text(page.content(), encoding="utf-8")
+            except Exception:
+                pass
+            servicio, lista = ciudades
+            en_mi_ciudad = [c for c in lista if RE_CIUDAD.search(c)]
+            base = {"modalidad": modalidad, "captura": captura, "html": html,
+                    "servicio": servicio, "ciudades": lista}
+            if en_mi_ciudad:
+                return {**base, "estado": "hay_cupos", "seguro": True, "en_ciudad": True,
+                        "detalle": (f"[{nombre}] HAY AGENDA EN {en_mi_ciudad[0]}. "
+                                    f"Servicio: {servicio}. Ciudades: {' | '.join(lista)}")}
+            return {**base, "estado": "otras_ciudades",
+                    "detalle": (f"[{nombre}] Hay agenda, pero no en {CIUDAD}: "
+                                f"{' | '.join(lista) or '(lista vacia)'}. Servicio: {servicio}")}
+
         # Confirmacion positiva: tras el clic en Devoluciones deben aparecer
         # opciones nuevas (especialidades, sedes, fechas). Si no aparece nada
         # nuevo y tampoco el aviso de sin cupos, puede ser un error de la
@@ -676,6 +713,65 @@ def _recorrer(page, modalidad: str, debug: bool) -> dict:
                 "detalle": (f"[{nombre}] {tipo}: {primera} | En pantalla: "
                             f"{' | '.join(visibles) or '(nada legible)'}"),
                 "captura": err}
+
+
+SEL_SERVICIOS = 'div[contenido="servicio"] select'
+SEL_SIGUIENTE_1 = 'div[contenido="botonesPasoUno"] > div[nombreControl="btnSiguiente"]'
+SEL_CIUDADES = 'div[contenido="Ciudad"] select'
+RE_SERVICIO = re.compile(r"veh[ií]cul|el[eé]ctric|h[ií]brid", re.I)
+
+JS_OPCIONES = """sel => Array.from(document.querySelectorAll(sel))
+  .filter(s => s.offsetParent !== null || s.closest('[contenido]')?.offsetParent !== null)
+  .flatMap(s => Array.from(s.options))
+  .filter(o => o.value && o.value !== '0' && o.text.trim() && !/seleccion/i.test(o.text))
+  .map(o => ({valor: o.value, texto: o.text.trim()}))"""
+
+
+def _opciones_select(page, selector: str) -> list[dict]:
+    try:
+        return page.evaluate(JS_OPCIONES, selector)
+    except Exception:
+        return []
+
+
+def _leer_ciudades(page, *, debug: bool, modalidad: str) -> tuple[str, list[str]] | None:
+    """Paso 1: elige el servicio; Paso 2: lee las ciudades. None si no aplica."""
+    fin = time.monotonic() + 8
+    servicios = []
+    while time.monotonic() < fin and not servicios:
+        servicios = _opciones_select(page, SEL_SERVICIOS)
+        if not servicios:
+            page.wait_for_timeout(500)
+    if not servicios:
+        return None
+    elegido = next((s for s in servicios if RE_SERVICIO.search(s["texto"])), servicios[0])
+    log(f"   servicios: {' | '.join(s['texto'] for s in servicios)[:300]}")
+    log(f"   elijo servicio -> {elegido['texto'][:120]}")
+    page.locator(SEL_SERVICIOS).first.select_option(value=elegido["valor"])
+    page.wait_for_timeout(800)
+    esperar_sin_cortina(page)
+    clic(page, SEL_SIGUIENTE_1, "Siguiente (paso 1)", paso=f"05_paso2_{modalidad}",
+         debug=debug, espera=1500)
+    fin = time.monotonic() + 30
+    ciudades = []
+    while time.monotonic() < fin and not ciudades:
+        ciudades = _opciones_select(page, SEL_CIUDADES)
+        if not ciudades:
+            page.wait_for_timeout(700)
+    return elegido["texto"], [c["texto"] for c in ciudades]
+
+
+def _seleccionar_ciudad(page) -> None:
+    """Modo asistido: deja escogida la ciudad buscada en el Paso 2."""
+    try:
+        ciudad = next((c for c in _opciones_select(page, SEL_CIUDADES)
+                       if RE_CIUDAD.search(c["texto"])), None)
+        if ciudad:
+            page.locator(SEL_CIUDADES).first.select_option(value=ciudad["valor"])
+            page.wait_for_timeout(800)
+            esperar_sin_cortina(page)
+    except Exception as e:
+        log(f"   no pude escoger la ciudad ({type(e).__name__}); escogela a mano")
 
 
 def _traer_al_frente(page) -> None:
@@ -721,7 +817,7 @@ def _entregar_al_usuario(page) -> None:
 
 
 def revisar(modalidades: list[str], *, debug: bool = False, asistido: bool = False,
-            al_detectar=None) -> list[dict]:
+            al_detectar=None, al_otras=None) -> list[dict]:
     """Revisa cada modalidad en el mismo navegador y devuelve los resultados.
 
     al_detectar(resultado) se llama en cuanto una modalidad muestra cupos, antes
@@ -753,8 +849,12 @@ def revisar(modalidades: list[str], *, debug: bool = False, asistido: bool = Fal
                     if al_detectar:
                         al_detectar(r)
                     if asistido:
+                        if r.get("en_ciudad"):
+                            _seleccionar_ciudad(page)
                         _entregar_al_usuario(page)
                         break
+                elif r["estado"] == "otras_ciudades" and al_otras:
+                    al_otras(r)
                 try:
                     page.close()
                 except Exception:
@@ -776,6 +876,8 @@ def estado_global(resultados: list[dict]) -> str:
     estados = {r["estado"] for r in resultados}
     if "hay_cupos" in estados:
         return "hay_cupos"
+    if "otras_ciudades" in estados:
+        return "otras_ciudades"
     if "sin_cupos" in estados:
         return "sin_cupos"
     return "error"
@@ -801,16 +903,44 @@ def _manejar_cupos(r: dict) -> None:
     if not llamar and ahora - est.get("ultimo_aviso", 0) < COOLDOWN_AVISO_MIN * 60:
         log("   cupos siguen visibles; aviso ya enviado hace poco")
         return
-    titulo = (f"🚨 CITA DIAN DISPONIBLE ({nombre})" if seguro
-              else f"🚨 POSIBLE CITA DIAN ({nombre}), revisa ya")
+    if r.get("en_ciudad"):
+        titulo = f"🚨 CITA DIAN EN {CIUDAD.upper()} DISPONIBLE ({nombre})"
+        cuerpo = ("Hay agenda en tu ciudad. Entra YA, se agotan en minutos.\n\n"
+                  f"{URL}\n\nRuta: {ruta} > servicio: {r.get('servicio', '')} > "
+                  f"ciudad: {CIUDAD}\n\n")
+    else:
+        titulo = (f"🚨 CITA DIAN DISPONIBLE ({nombre})" if seguro
+                  else f"🚨 POSIBLE CITA DIAN ({nombre}), revisa ya")
+        cuerpo = ("No salio el aviso de 'sin cupos'. Revisa ya si la ciudad es la "
+                  f"tuya.\n\n{URL}\n\nRuta: {ruta}\n\n")
     avisar(titulo,
-           "No salio el aviso de 'sin cupos'. Entra YA, se agotan en minutos.\n\n"
-           f"{URL}\n\nRuta: {ruta}\n\nHora: {datetime.now():%Y-%m-%d %H:%M:%S}\n\n"
+           cuerpo + f"Hora: {datetime.now():%Y-%m-%d %H:%M:%S}\n\n"
            f"Detalle: {r['detalle'][:600]}",
            r.get("captura"), urgente=True, llamar=llamar)
     est["ultimo_aviso"] = ahora
     if llamar:
         est["ultima_llamada"] = ahora
+    guardar_estado(est)
+
+
+def _manejar_otras(r: dict) -> None:
+    """Hay agenda, pero en otras ciudades: aviso suave, sin alarma ni llamada."""
+    if not AVISAR_OTRAS:
+        return
+    est = leer_estado()
+    ahora = time.time()
+    lista = " | ".join(r.get("ciudades") or [])
+    # Se repite solo si cambio la lista o paso el enfriamiento.
+    if (est.get("otras_lista") == lista
+            and ahora - est.get("otras_aviso", 0) < COOLDOWN_OTRAS_MIN * 60):
+        return
+    avisar(f"Cupos DIAN solo en otras ciudades (no {CIUDAD})",
+           f"Hay agenda en: {lista or '(no se leyo la lista)'}.\n"
+           f"En {CIUDAD} no hay por ahora. No tienes que hacer nada; si aparece "
+           f"{CIUDAD} te llega el aviso urgente.",
+           urgente=False, solo=("ntfy", "telegram"))
+    est["otras_lista"] = lista
+    est["otras_aviso"] = ahora
     guardar_estado(est)
 
 
@@ -835,7 +965,8 @@ def _latido(revisiones: int) -> None:
 def una_revision(*, debug: bool = False, asistido: bool = False,
                  modalidades: list[str] | None = None) -> tuple[str, list[dict]]:
     resultados = revisar(modalidades or modalidades_configuradas(), debug=debug,
-                         asistido=asistido, al_detectar=_manejar_cupos)
+                         asistido=asistido, al_detectar=_manejar_cupos,
+                         al_otras=_manejar_otras)
     estado = estado_global(resultados)
     # La captura "resultado.png" es la que publica el workflow.
     elegida = next((r for r in resultados if r["estado"] == "hay_cupos"), None) \
@@ -862,7 +993,8 @@ def vigilar(*, duracion_min: int | None = None, salir_fuera_horario: bool = Fals
     log("=" * 62)
 
     inicio = time.monotonic()
-    resumen = {"revisiones": 0, "sin_cupos": 0, "hay_cupos": 0, "error": 0,
+    resumen = {"revisiones": 0, "sin_cupos": 0, "hay_cupos": 0, "otras_ciudades": 0,
+               "error": 0,
                "inicio": f"{datetime.now():%Y-%m-%d %H:%M:%S}"}
     fallos_seguidos = 0
 
@@ -993,7 +1125,7 @@ def main() -> None:
 
     log(f"Revision v{VERSION}, modalidades: {', '.join(modalidades_configuradas())}")
     estado, _ = una_revision(debug=args.debug, asistido=args.abrir_navegador)
-    sys.exit({"hay_cupos": 0, "sin_cupos": 1}.get(estado, 2))
+    sys.exit({"hay_cupos": 0, "sin_cupos": 1, "otras_ciudades": 1}.get(estado, 2))
 
 
 if __name__ == "__main__":

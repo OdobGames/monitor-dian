@@ -185,29 +185,44 @@ def recorrer(navegador, carpeta: Path, guardar_js: bool) -> dict:
         res["sin_cupos"] = mon.TEXTO_SIN_CUPOS.lower() in cuerpo.lower()
 
         if not res["sin_cupos"]:
-            # Buscar la especialidad de vehiculos electricos y entrar un paso.
-            candidatos = page.locator("body *").filter(has_text=RE_VEHICULO)
-            objetivo = None
-            for i in range(min(candidatos.count(), 80)):
-                el = candidatos.nth(i)
-                try:
-                    if el.is_visible() and len(el.inner_text()) < 200:
-                        objetivo = el  # el mas interno que contiene el texto
-                except Exception:
-                    continue
-            res["especialidad_encontrada"] = objetivo is not None
-            if objetivo is not None:
-                res["especialidad_texto"] = objetivo.inner_text()[:200]
-                objetivo.click(force=True)
-                page.wait_for_timeout(1500)
-                try:
+            # Paso 1: servicio (lista desplegable) > Siguiente > Paso 2: ciudades.
+            res["servicios"] = mon._opciones_select(page, mon.SEL_SERVICIOS)
+            leido = mon._leer_ciudades(page, debug=False, modalidad="videoatencion")
+            pasos.append(foto(page, carpeta, "04_paso2_ciudades"))
+            if leido:
+                res["especialidad_encontrada"] = True
+                res["especialidad_texto"], res["ciudades"] = leido
+                res["menciona_bogota"] = any(mon.RE_CIUDAD.search(c) for c in leido[1])
+                # Entra a la ciudad buscada (o a la primera) para ver sedes y
+                # fechas. No pasa al Paso 3.
+                opciones = mon._opciones_select(page, mon.SEL_CIUDADES)
+                destino = next((c for c in opciones if mon.RE_CIUDAD.search(c["texto"])),
+                               opciones[0] if opciones else None)
+                if destino:
+                    page.locator(mon.SEL_CIUDADES).first.select_option(value=destino["valor"])
+                    page.wait_for_timeout(1500)
                     mon.esperar_sin_cortina(page)
-                except Exception:
-                    pass
-                page.wait_for_timeout(2500)
-                pasos.append(foto(page, carpeta, "04_especialidad"))
-            texto = page.inner_text("body")
-            res["menciona_bogota"] = bool(re.search(r"bogot", texto, re.I))
+                    page.wait_for_timeout(2500)
+                    pasos.append(foto(page, carpeta, "05_ciudad"))
+                    sedes = mon._opciones_select(page, 'div[contenido="Sede"] select')
+                    res["sedes"] = sedes
+                    if sedes:
+                        page.locator('div[contenido="Sede"] select').first.select_option(
+                            value=sedes[0]["valor"])
+                        page.wait_for_timeout(1500)
+                        mon.esperar_sin_cortina(page)
+                        page.wait_for_timeout(2500)
+                        pasos.append(foto(page, carpeta, "06_sede"))
+                        try:
+                            page.locator('div[nombreControl="btnFecha"], div[nombre="btnFecha"]'
+                                         ).first.click(force=True, timeout=5000)
+                            page.wait_for_timeout(2000)
+                        except Exception:
+                            pass
+                        pasos.append(foto(page, carpeta, "07_calendario"))
+            else:
+                res["especialidad_encontrada"] = False
+                res["menciona_bogota"] = bool(re.search(r"bogot", page.inner_text("body"), re.I))
     except Exception as e:
         res["error"] = f"{type(e).__name__}: {str(e)[:400]}"
         try:
@@ -269,7 +284,8 @@ def main() -> None:
                     js.rename(raiz / "js")
             indice.append({"carpeta": str(carpeta.relative_to(raiz)), **{
                 k: res.get(k) for k in ("inicio", "sin_cupos", "especialidad_encontrada",
-                                        "especialidad_texto", "menciona_bogota", "error")}})
+                                        "especialidad_texto", "ciudades", "sedes",
+                                        "menciona_bogota", "error")}})
             indice_file.write_text(json.dumps(indice, ensure_ascii=False, indent=1),
                                    encoding="utf-8")
             print(f"pasada {n}: sin_cupos={res.get('sin_cupos')} "

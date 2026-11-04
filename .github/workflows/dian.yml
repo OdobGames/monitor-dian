@@ -134,7 +134,7 @@ jobs:
               "Sin cupos" if r.get("revisiones") else "No se reviso (fuera de horario o error al arrancar)")
           print(f"## {titulo}\n")
           print("| | |\n|---|---|")
-          for k in ("inicio", "actualizado", "revisiones", "sin_cupos", "hay_cupos", "error"):
+          for k in ("inicio", "actualizado", "revisiones", "sin_cupos", "otras_ciudades", "hay_cupos", "error"):
               print(f"| {k} | {r.get(k, '-')} |")
           print("\nCapturas y registro en **Artifacts**, al pie de esta pagina.")
           PY
