@@ -608,9 +608,26 @@ def _recorrer(page, modalidad: str, debug: bool) -> dict:
              paso="02_persona", debug=debug)
         clic(page, f'div.btnTipoAtencion[llave="{LLAVE_MODALIDAD[modalidad]}"]', nombre,
              paso=f"03_{modalidad}", debug=debug, espera=3000)
+        # Visto el 2026-11-03: en Presencial la lista de categorias no trae
+        # Devoluciones (RUT y orientacion TAC, Aduanas, Cobranzas, Recaudo,
+        # Defensoria). Eso no es un error ni un cupo: se reporta como "no
+        # disponible" sin esperar 45 s. Si algun dia aparece, sigue la ruta.
+        page.locator("div.btnCategoria").first.wait_for(state="visible",
+                                                        timeout=TIMEOUT_CLIC_MS)
+        categorias = page.evaluate(
+            """() => Array.from(document.querySelectorAll('div.btnCategoria'))
+                 .filter(e => e.offsetParent !== null)
+                 .map(e => (e.innerText || '').trim().replace(/\\s+/g, ' '))
+                 .filter(Boolean)""")
+        if not any("devoluci" in c.lower() for c in categorias):
+            page.screenshot(path=str(captura), full_page=True)
+            return {"modalidad": modalidad, "estado": "sin_cupos", "no_aplica": True,
+                    "detalle": (f"[{nombre}] Devoluciones no aparece en esta modalidad. "
+                                f"Categorias: {' | '.join(categorias[:12])}"),
+                    "captura": captura}
         sel_dev = 'div.btnCategoria:has(span.btnCatSpan:text-is("Devoluciones."))'
         if page.locator(sel_dev).count() == 0:
-            sel_dev = 'div.btnCategoria:has-text("Devoluciones")'
+            sel_dev = 'div.btnCategoria:has-text("Devoluci")'
         antes = set(_opciones_visibles(page))
         clic(page, sel_dev, "Devoluciones", paso=f"04_dev_{modalidad}", debug=debug,
              espera=2000)
