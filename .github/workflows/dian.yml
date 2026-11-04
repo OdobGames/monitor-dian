@@ -163,6 +163,7 @@ jobs:
           cp /tmp/resultado.png ultima/resultado.png
           printf '# Ultima revision\n\n%s (hora de Bogota)\n\n![resultado](ultima/resultado.png)\n' \
             "$(TZ=America/Bogota date '+%Y-%m-%d %H:%M:%S')" > README.md
-          git add -A ultima README.md
+          # -f: el .gitignore excluye *.png y sin esto la captura nunca se publicaba
+          git add -f ultima/resultado.png README.md
           git commit -q -m "Ultima revision"
           git push -f origin resultados

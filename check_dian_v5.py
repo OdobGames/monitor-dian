@@ -652,8 +652,13 @@ def _recorrer(page, modalidad: str, debug: bool) -> dict:
         except Exception:
             err = None
         tipo = "Timeout" if isinstance(e, PWTimeout) else type(e).__name__
+        # Lo que habia en pantalla al fallar: dice en que paso cambio la pagina.
+        visibles = _opciones_visibles(page)[:20]
+        primera = str(e).splitlines()[0][:200] if str(e) else ""
         return {"modalidad": modalidad, "estado": "error",
-                "detalle": f"[{nombre}] {tipo}: {str(e)[:300]}", "captura": err}
+                "detalle": (f"[{nombre}] {tipo}: {primera} | En pantalla: "
+                            f"{' | '.join(visibles) or '(nada legible)'}"),
+                "captura": err}
 
 
 def _traer_al_frente(page) -> None:
@@ -726,7 +731,7 @@ def revisar(modalidades: list[str], *, debug: bool = False, asistido: bool = Fal
                 page = ctx.new_page()
                 r = _recorrer(page, modalidad, debug)
                 resultados.append(r)
-                log(f"   {r['estado']}: {r['detalle'][:160]}")
+                log(f"   {r['estado']}: {r['detalle'][:400]}")
                 if r["estado"] == "hay_cupos":
                     if al_detectar:
                         al_detectar(r)
