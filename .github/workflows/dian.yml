@@ -17,7 +17,7 @@ name: Monitor de citas DIAN
 
 on:
   schedule:
-    - cron: "8 * * * *"
+    - cron: "9 * * * *"
   workflow_dispatch:        # boton "Run workflow" para arrancar ya
     inputs:
       probar_avisos:
