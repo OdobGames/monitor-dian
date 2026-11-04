@@ -17,6 +17,11 @@ on:
   schedule:
     - cron: "7 0-1,10-23 * * *"
   workflow_dispatch:        # boton "Run workflow" para arrancar ya
+    inputs:
+      probar_avisos:
+        description: "Solo mandar un aviso de prueba a todos los canales (sin vigilar)"
+        type: boolean
+        default: false
 
 concurrency:
   group: dian-monitor
@@ -77,8 +82,13 @@ jobs:
         if: steps.cache-chromium.outputs.cache-hit == 'true'
         run: playwright install-deps chromium
 
+      - name: Probar avisos
+        if: ${{ inputs.probar_avisos }}
+        run: python check_dian_v5.py --test-avisos
+
       - name: Vigilar
         id: vigilar
+        if: ${{ !inputs.probar_avisos }}
         run: |
           set +e
           python check_dian_v5.py --vigilar --duracion-min 340 --respetar-horario

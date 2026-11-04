@@ -91,6 +91,8 @@ Secrets and variables > Actions > New repository secret. Usa exactamente los
 mismos nombres (`DIAN_NTFY_TOPIC`, `DIAN_TELEGRAM_TOKEN`, etc.).
 
 Para arrancarlo: pestaña **Actions** > Monitor de citas DIAN > **Run workflow**.
+Si marcas la casilla "Solo mandar un aviso de prueba", no vigila: solo te manda
+un aviso por cada canal configurado, para comprobar los secretos.
 
 Ojo: los términos de GitHub piden que Actions se use para trabajo del propio
 software del repositorio. Un monitor que corre todo el día es zona gris y
