@@ -1,0 +1,94 @@
+name: Explorar pagina DIAN
+
+# Corre explorar.py: recorre la pagina de agendamiento y guarda su codigo, las
+# respuestas de red, el HTML y las capturas de cada paso. Si encuentra cupos,
+# entra a la especialidad y guarda la lista de seccionales. No agenda nada.
+#
+# Publica todo en la rama "exploracion" (se reescribe en cada corrida):
+#   https://github.com/OdobGames/monitor-dian/tree/exploracion
+#
+# Primero hace una pasada rapida y la publica; luego sigue buscando cupos
+# hasta "buscar_min" minutos y vuelve a publicar.
+
+on:
+  workflow_dispatch:
+    inputs:
+      buscar_min:
+        description: "Minutos buscando cupos despues de la primera pasada"
+        default: "60"
+
+concurrency:
+  group: dian-explorar
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  explorar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 100
+    env:
+      TZ: America/Bogota
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Instalar Playwright
+        run: pip install -r requirements.txt
+
+      - name: Cache de Chromium
+        id: cache-chromium
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: chromium-${{ runner.os }}-${{ hashFiles('requirements.txt') }}
+
+      - name: Bajar Chromium
+        if: steps.cache-chromium.outputs.cache-hit != 'true'
+        run: playwright install --with-deps --only-shell chromium
+
+      - name: Librerias del sistema
+        if: steps.cache-chromium.outputs.cache-hit == 'true'
+        run: playwright install-deps chromium
+
+      - name: Primera pasada
+        run: python explorar.py --salida explorar || true
+
+      - name: Publicar primera pasada
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          rm -rf /tmp/pub && mkdir -p /tmp/pub && cp -r explorar /tmp/pub/
+          cd /tmp/pub
+          printf '# Exploracion de la pagina DIAN\n\n%s (hora de Bogota)\n\nVer explorar/indice.json\n' \
+            "$(date '+%Y-%m-%d %H:%M:%S')" > README.md
+          git init -q -b exploracion
+          git add -A
+          git -c user.name="github-actions[bot]" \
+              -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+              commit -q -m "exploracion $(date '+%Y-%m-%d %H:%M')"
+          git push -qf "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" exploracion
+
+      - name: Buscar cupos
+        run: python explorar.py --salida explorar --buscar-min "${{ inputs.buscar_min }}" || true
+
+      - name: Publicar busqueda
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          rm -rf /tmp/pub && mkdir -p /tmp/pub && cp -r explorar /tmp/pub/
+          cd /tmp/pub
+          printf '# Exploracion de la pagina DIAN\n\n%s (hora de Bogota)\n\nVer explorar/indice.json\n' \
+            "$(date '+%Y-%m-%d %H:%M:%S')" > README.md
+          git init -q -b exploracion
+          git add -A
+          git -c user.name="github-actions[bot]" \
+              -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+              commit -q -m "exploracion $(date '+%Y-%m-%d %H:%M')"
+          git push -qf "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" exploracion
