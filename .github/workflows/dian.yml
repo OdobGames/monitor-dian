@@ -24,6 +24,9 @@ on:
         description: "Solo mandar un aviso de prueba a todos los canales (sin vigilar)"
         type: boolean
         default: false
+      duracion_min:
+        description: "Minutos de vigilancia de esta corrida (340 = normal)"
+        default: "340"
 
 concurrency:
   group: dian-monitor
@@ -41,6 +44,12 @@ jobs:
       TZ: America/Bogota
       DIAN_MODALIDAD: ambas
       DIAN_INTERVALO_SEG: "180"
+      # Modo rapido: la pagina queda abierta y consulta Devoluciones cada 20 s,
+      # con recarga completa cada 5 min. Presencial (que no tiene Devoluciones)
+      # se revisa cada 30 min por si un dia la agregan.
+      DIAN_RAPIDO_SEG: "20"
+      DIAN_RECARGA_MIN: "5"
+      DIAN_PRESENCIAL_CADA_MIN: "30"
       DIAN_HORA_INICIO: "5"
       DIAN_HORA_FIN: "21"
       # Avisos: cada canal es opcional; el que no tenga sus secretos, no se usa.
@@ -97,7 +106,7 @@ jobs:
         if: ${{ !inputs.probar_avisos }}
         run: |
           set +e
-          python check_dian_v5.py --vigilar --duracion-min 340
+          python check_dian_v5.py --vigilar --duracion-min "${{ inputs.duracion_min || 340 }}"
           codigo=$?
           set -e
           echo "codigo=$codigo" >> "$GITHUB_OUTPUT"
@@ -134,7 +143,7 @@ jobs:
               "Sin cupos" if r.get("revisiones") else "No se reviso (fuera de horario o error al arrancar)")
           print(f"## {titulo}\n")
           print("| | |\n|---|---|")
-          for k in ("inicio", "actualizado", "revisiones", "sin_cupos", "otras_ciudades", "hay_cupos", "error"):
+          for k in ("inicio", "actualizado", "revisiones", "recargas", "sin_cupos", "otras_ciudades", "hay_cupos", "error"):
               print(f"| {k} | {r.get(k, '-')} |")
           print("\nCapturas y registro en **Artifacts**, al pie de esta pagina.")
           PY

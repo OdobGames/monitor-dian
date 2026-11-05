@@ -59,7 +59,7 @@ from pathlib import Path
 
 from playwright.sync_api import sync_playwright, TimeoutError as PWTimeout
 
-VERSION = "6.3"
+VERSION = "6.4"
 CARPETA = Path(__file__).resolve().parent
 
 
@@ -167,6 +167,17 @@ INTENTOS_CARGA = int(_env("DIAN_INTENTOS_CARGA", "2"))
 ESPERA_MODAL_MS = int(_env("DIAN_ESPERA_MODAL_MS", "15000"))
 # Modo asistido: cuanto se deja la pagina en pantalla esperando al usuario.
 ESPERA_ASISTIDO_MIN = float(_env("DIAN_ESPERA_ASISTIDO_MIN", "20"))
+# Modo rapido: deja la pagina abierta en Videoatencion y vuelve a consultar
+# Devoluciones cada RAPIDO_SEG segundos, sin recargar. Cada RECARGA_MIN minutos
+# (o ante cualquier rareza) recarga todo, para no quedarse con una sesion vieja.
+# 0 = modo clasico (pagina completa cada DIAN_INTERVALO_SEG).
+RAPIDO_SEG = int(_env("DIAN_RAPIDO_SEG", "0"))
+RECARGA_MIN = float(_env("DIAN_RECARGA_MIN", "5"))
+PRESENCIAL_CADA_MIN = float(_env("DIAN_PRESENCIAL_CADA_MIN", "30"))
+# Mientras sigan visibles los cupos en la ciudad buscada, repetir el aviso
+# urgente cada tantos segundos (hasta REPETIR_MAX veces por racha).
+REPETIR_AVISO_SEG = int(_env("DIAN_REPETIR_AVISO_SEG", "60"))
+REPETIR_MAX = int(_env("DIAN_REPETIR_MAX", "10"))
 
 OUT_DIR = CARPETA / "salida"
 OUT_DIR.mkdir(exist_ok=True)
@@ -637,18 +648,38 @@ def _recorrer(page, modalidad: str, debug: bool) -> dict:
             sel_dev = 'div.btnCategoria:has-text("Devoluci")'
         antes = set(_opciones_visibles(page))
         clic(page, sel_dev, "Devoluciones", paso=f"04_dev_{modalidad}", debug=debug,
-             espera=2000)
+             espera=500)
+        return _evaluar(page, modalidad, antes, captura_siempre=True)
+
+    except Exception as e:
+        return _resultado_error(page, modalidad, e)
+
+
+JS_RESPUESTA = """texto => document.body.innerText.includes(texto) ||
+  Array.from(document.querySelectorAll('div[contenido="servicio"] select option'))
+       .some(o => o.value && o.value !== '0' && !/seleccion/i.test(o.text))"""
+
+
+def _evaluar(page, modalidad: str, antes: set, *, captura_siempre: bool) -> dict:
+    """Lee el resultado despues del clic en Devoluciones."""
+    nombre = NOMBRE_MODALIDAD[modalidad]
+    captura = OUT_DIR / f"resultado_{modalidad}.png"
+    try:
+        # Sale en cuanto aparece el aviso de sin cupos o la lista de servicios:
+        # asi un cupo se detecta sin esperar los 15 s de margen.
         try:
-            page.wait_for_selector(f"text={TEXTO_SIN_CUPOS}", state="visible",
-                                   timeout=ESPERA_MODAL_MS)
+            page.wait_for_function(JS_RESPUESTA, arg=TEXTO_SIN_CUPOS,
+                                   timeout=ESPERA_MODAL_MS, polling=250)
         except PWTimeout:
             pass
 
-        page.screenshot(path=str(captura), full_page=True)
         cuerpo = page.inner_text("body")
         if TEXTO_SIN_CUPOS.lower() in cuerpo.lower():
+            if captura_siempre:
+                page.screenshot(path=str(captura), full_page=True)
             return {"modalidad": modalidad, "estado": "sin_cupos",
                     "detalle": f"[{nombre}] sin cupos por ahora.", "captura": captura}
+        page.screenshot(path=str(captura), full_page=True)
 
         sello = f"{datetime.now():%Y%m%d_%H%M%S}"
         html = OUT_DIR / f"cupos_{modalidad}_{sello}.html"
@@ -704,19 +735,24 @@ def _recorrer(page, modalidad: str, debug: bool) -> dict:
                 "captura": captura, "html": html, "opciones": opciones}
 
     except Exception as e:
-        err = OUT_DIR / f"error_{modalidad}.png"
-        try:
-            page.screenshot(path=str(err), full_page=True)
-        except Exception:
-            err = None
-        tipo = "Timeout" if isinstance(e, PWTimeout) else type(e).__name__
-        # Lo que habia en pantalla al fallar: dice en que paso cambio la pagina.
-        visibles = _opciones_visibles(page)[:20]
-        primera = str(e).splitlines()[0][:200] if str(e) else ""
-        return {"modalidad": modalidad, "estado": "error",
-                "detalle": (f"[{nombre}] {tipo}: {primera} | En pantalla: "
-                            f"{' | '.join(visibles) or '(nada legible)'}"),
-                "captura": err}
+        return _resultado_error(page, modalidad, e)
+
+
+def _resultado_error(page, modalidad: str, e: Exception) -> dict:
+    nombre = NOMBRE_MODALIDAD[modalidad]
+    err = OUT_DIR / f"error_{modalidad}.png"
+    try:
+        page.screenshot(path=str(err), full_page=True)
+    except Exception:
+        err = None
+    tipo = "Timeout" if isinstance(e, PWTimeout) else type(e).__name__
+    # Lo que habia en pantalla al fallar: dice en que paso cambio la pagina.
+    visibles = _opciones_visibles(page)[:20]
+    primera = str(e).splitlines()[0][:200] if str(e) else ""
+    return {"modalidad": modalidad, "estado": "error",
+            "detalle": (f"[{nombre}] {tipo}: {primera} | En pantalla: "
+                        f"{' | '.join(visibles) or '(nada legible)'}"),
+            "captura": err}
 
 
 SEL_SERVICIOS = 'div[contenido="servicio"] select'
@@ -818,6 +854,80 @@ def _entregar_al_usuario(page) -> None:
         else f"   nadie cerro la ventana en {ESPERA_ASISTIDO_MIN:g} min, sigue la vigilancia")
 
 
+def _lanzar(p, *, debug: bool = False, asistido: bool = False):
+    args = ARGS_LINUX if sys.platform.startswith("linux") else []
+    visible = debug or asistido
+    if asistido and not debug:
+        args = args + ARGS_OCULTO
+    opciones = {"headless": not visible, "args": args}
+    if NAVEGADOR_RUTA:
+        opciones["executable_path"] = NAVEGADOR_RUTA
+    elif NAVEGADOR_CANAL:
+        opciones["channel"] = NAVEGADOR_CANAL
+    navegador = p.chromium.launch(**opciones)
+    ctx = navegador.new_context(viewport={"width": 1400, "height": 1000},
+                                locale="es-CO", user_agent=USER_AGENT)
+    return navegador, ctx
+
+
+def _sel_devoluciones(page) -> str:
+    sel = 'div.btnCategoria:has(span.btnCatSpan:text-is("Devoluciones."))'
+    if page.locator(sel).count() == 0:
+        sel = 'div.btnCategoria:has-text("Devoluci")'
+    return sel
+
+
+class Consultas:
+    """Cuenta las consultas de cupos que la pagina le hace a la DIAN."""
+
+    def __init__(self, page):
+        self.n = 0
+        page.on("request", lambda r: self._ver(r))
+
+    def _ver(self, r):
+        if r.method == "POST" and "ValidadorValidar" in r.url:
+            self.n += 1
+
+
+def _rechequear(page, modalidad: str, consultas: "Consultas") -> dict | None:
+    """Vuelve a consultar Devoluciones sin recargar la pagina.
+
+    Devuelve None si algo no cuadra (el aviso no se cerro, no esta el boton, la
+    pagina no hizo una consulta nueva...): quien llama recarga todo.
+    """
+    try:
+        for sel in ('div[pantalla="ModalError"][nombre="btnAceptar"]',
+                    'div[pantalla="ModalError"][nombre="btnCerrarModal"]'):
+            loc = page.locator(sel).first
+            if loc.count() and loc.is_visible():
+                loc.click(force=True)
+                break
+        page.wait_for_timeout(300)
+        esperar_sin_cortina(page)
+        try:
+            page.wait_for_selector(f"text={TEXTO_SIN_CUPOS}", state="hidden", timeout=5000)
+        except PWTimeout:
+            return None
+        sel_dev = _sel_devoluciones(page)
+        boton = page.locator(sel_dev).first
+        if not boton.count() or not boton.is_visible():
+            return None
+        antes_n = consultas.n
+        antes = set(_opciones_visibles(page))
+        boton.click(force=True)
+        page.wait_for_timeout(400)
+        esperar_sin_cortina(page)
+        r = _evaluar(page, modalidad, antes, captura_siempre=False)
+        if consultas.n == antes_n:
+            # El clic no le pregunto nada nuevo a la DIAN: el resultado no vale.
+            log("   la pagina no hizo una consulta nueva; recargo")
+            return None
+        return r
+    except Exception as e:
+        log(f"   rechequeo fallo ({type(e).__name__}); recargo")
+        return None
+
+
 def revisar(modalidades: list[str], *, debug: bool = False, asistido: bool = False,
             al_detectar=None, al_otras=None) -> list[dict]:
     """Revisa cada modalidad en el mismo navegador y devuelve los resultados.
@@ -829,19 +939,8 @@ def revisar(modalidades: list[str], *, debug: bool = False, asistido: bool = Fal
     with sync_playwright() as p:
         navegador = None
         try:
-            args = ARGS_LINUX if sys.platform.startswith("linux") else []
-            visible = debug or asistido
-            if asistido and not debug:
-                args = args + ARGS_OCULTO
-            opciones = {"headless": not visible, "args": args}
-            if NAVEGADOR_RUTA:
-                opciones["executable_path"] = NAVEGADOR_RUTA
-            elif NAVEGADOR_CANAL:
-                opciones["channel"] = NAVEGADOR_CANAL
             # El arranque va dentro del try: si falla, es un error, no "sin cupos".
-            navegador = p.chromium.launch(**opciones)
-            ctx = navegador.new_context(viewport={"width": 1400, "height": 1000},
-                                        locale="es-CO", user_agent=USER_AGENT)
+            navegador, ctx = _lanzar(p, debug=debug, asistido=asistido)
             for modalidad in modalidades:
                 page = ctx.new_page()
                 r = _recorrer(page, modalidad, debug)
@@ -900,9 +999,22 @@ def _manejar_cupos(r: dict) -> None:
     ruta = f"Agendar cita > Persona Natural > {nombre} > Devoluciones"
     seguro = r.get("seguro", True)
     llamar = seguro and ahora - est.get("ultima_llamada", 0) >= COOLDOWN_LLAMADA_MIN * 60
+    desde_ultimo = ahora - est.get("ultimo_aviso", 0)
+    if r.get("en_ciudad"):
+        # Cita en la ciudad buscada: se repite cada REPETIR_AVISO_SEG mientras
+        # siga visible, para que no se pierda si no se vio el primer aviso.
+        # Una racha nueva empieza si pasaron 10 min sin avisar.
+        if desde_ultimo > 600:
+            est["racha_avisos"] = 0
+        if est.get("racha_avisos", 0) >= REPETIR_MAX:
+            log("   cupos siguen visibles; ya se repitio el aviso el maximo de veces")
+            return
+        if not llamar and desde_ultimo < REPETIR_AVISO_SEG:
+            return
+        est["racha_avisos"] = est.get("racha_avisos", 0) + 1
     # Un cupo confirmado que todavia no ha generado llamada pasa siempre, aunque
     # hace poco haya salido un aviso de "posible cita".
-    if not llamar and ahora - est.get("ultimo_aviso", 0) < COOLDOWN_AVISO_MIN * 60:
+    elif not llamar and desde_ultimo < COOLDOWN_AVISO_MIN * 60:
         log("   cupos siguen visibles; aviso ya enviado hace poco")
         return
     if r.get("en_ciudad"):
@@ -1049,6 +1161,133 @@ def vigilar(*, duracion_min: int | None = None, salir_fuera_horario: bool = Fals
     return resumen
 
 
+def vigilar_rapido(*, duracion_min: int | None = None, asistido: bool = False) -> dict:
+    """Como vigilar(), pero con la pagina abierta y una consulta cada RAPIDO_SEG."""
+    modalidades = modalidades_configuradas()
+    log("=" * 62)
+    log(f"VIGILANCIA RAPIDA v{VERSION}: Videoatencion cada {RAPIDO_SEG} s (recarga "
+        f"completa cada {RECARGA_MIN:g} min), entre las {HORA_INICIO}:00 y las "
+        f"{HORA_FIN}:00" + (f" | Presencial cada {PRESENCIAL_CADA_MIN:g} min"
+                             if "presencial" in modalidades else ""))
+    log(f"Avisos por: {', '.join(canales_configurados()) or 'NINGUNO configurado'}"
+        + (" | modo asistido" if asistido else ""))
+    log("=" * 62)
+
+    inicio = time.monotonic()
+    resumen = {"revisiones": 0, "sin_cupos": 0, "hay_cupos": 0, "otras_ciudades": 0,
+               "error": 0, "recargas": 0, "inicio": f"{datetime.now():%Y-%m-%d %H:%M:%S}"}
+    fallos_seguidos = 0
+    ultima_presencial = -1e9
+
+    def queda_seg() -> float:
+        return float("inf") if not duracion_min else duracion_min * 60 - (time.monotonic() - inicio)
+
+    def procesar(r: dict) -> None:
+        nonlocal fallos_seguidos
+        resumen["revisiones"] += 1
+        resumen[r["estado"]] += 1
+        if r["estado"] != "sin_cupos" or resumen["revisiones"] % 20 == 1:
+            log(f"   #{resumen['revisiones']} {r['estado']}: {r['detalle'][:400]}")
+        if r["estado"] == "hay_cupos":
+            _manejar_cupos(r)
+        elif r["estado"] == "otras_ciudades":
+            _manejar_otras(r)
+        if r["estado"] == "error":
+            fallos_seguidos += 1
+            if fallos_seguidos == 5 or (fallos_seguidos and fallos_seguidos % 60 == 0):
+                avisar("⚠️ Monitor DIAN con errores",
+                       f"Lleva {fallos_seguidos} consultas seguidas sin poder leer la "
+                       f"pagina. Puede que este caida. Conviene revisar a mano: {URL}",
+                       urgente=False)
+        else:
+            fallos_seguidos = 0
+            _latido(resumen["revisiones"])
+        if r.get("captura") and Path(r["captura"]).is_file():
+            try:
+                shutil.copyfile(r["captura"], OUT_DIR / "resultado.png")
+            except OSError:
+                pass
+
+    with sync_playwright() as p:
+        navegador = ctx = page = consultas = None
+        lista = False          # la pagina esta parada donde se puede rechequear
+        t_carga = -1e9
+        while queda_seg() > 0:
+            if not en_horario():
+                if page is not None:
+                    try:
+                        page.close()
+                    except Exception:
+                        pass
+                    page, lista = None, False
+                ahora = datetime.now()
+                inicio_hoy = ahora.replace(hour=HORA_INICIO, minute=0, second=5, microsecond=0)
+                hasta = (inicio_hoy - ahora).total_seconds()
+                if hasta <= 0:
+                    hasta += 86400
+                log(f"Fuera de horario ({ahora.hour}:00), en espera")
+                time.sleep(min(600, max(1, hasta), max(1, queda_seg())))
+                continue
+            if queda_seg() < 3 * 60:
+                break
+            t0 = time.monotonic()
+            try:
+                if navegador is None:
+                    navegador, ctx = _lanzar(p, asistido=asistido)
+                if "presencial" in modalidades and \
+                        time.monotonic() - ultima_presencial > PRESENCIAL_CADA_MIN * 60:
+                    pg = ctx.new_page()
+                    procesar(_recorrer(pg, "presencial", False))
+                    pg.close()
+                    ultima_presencial = time.monotonic()
+                r = None
+                if lista and page is not None and not page.is_closed() and \
+                        time.monotonic() - t_carga < RECARGA_MIN * 60:
+                    r = _rechequear(page, "videoatencion", consultas)
+                if r is None:
+                    if page is not None:
+                        try:
+                            page.close()
+                        except Exception:
+                            pass
+                    page = ctx.new_page()
+                    consultas = Consultas(page)
+                    resumen["recargas"] += 1
+                    r = _recorrer(page, "videoatencion", False)
+                    t_carga = time.monotonic()
+                procesar(r)
+                # Solo se puede rechequear desde el aviso de "sin cupos".
+                lista = r["estado"] == "sin_cupos"
+                if r["estado"] == "hay_cupos" and asistido:
+                    if r.get("en_ciudad") and r.get("servicio_valor"):
+                        _avanzar_a_paso2(page, r["servicio_valor"])
+                    _entregar_al_usuario(page)
+                    page, lista = None, False
+            except Exception as e:
+                log(f"!! fallo del navegador ({type(e).__name__}: {str(e)[:150]}); reinicio")
+                resumen["error"] += 1
+                try:
+                    if navegador:
+                        navegador.close()
+                except Exception:
+                    pass
+                navegador = ctx = page = None
+                lista = False
+            if resumen["revisiones"] % 10 == 0:
+                guardar_resumen(resumen)
+            espera = RAPIDO_SEG - (time.monotonic() - t0)
+            if espera > 0:
+                time.sleep(min(espera, max(0, queda_seg())))
+        try:
+            if navegador:
+                navegador.close()
+        except Exception:
+            pass
+    log(f"Fin de la vigilancia: {resumen}")
+    guardar_resumen(resumen)
+    return resumen
+
+
 def guardar_resumen(resumen: dict) -> None:
     resumen = dict(resumen, actualizado=f"{datetime.now():%Y-%m-%d %H:%M:%S}")
     try:
@@ -1115,9 +1354,13 @@ def main() -> None:
 
     if args.vigilar:
         try:
-            resumen = vigilar(duracion_min=args.duracion_min,
-                              salir_fuera_horario=args.respetar_horario,
-                              asistido=args.abrir_navegador)
+            if RAPIDO_SEG > 0:
+                resumen = vigilar_rapido(duracion_min=args.duracion_min,
+                                         asistido=args.abrir_navegador)
+            else:
+                resumen = vigilar(duracion_min=args.duracion_min,
+                                  salir_fuera_horario=args.respetar_horario,
+                                  asistido=args.abrir_navegador)
         except KeyboardInterrupt:
             log("Vigilancia detenida por el usuario")
             sys.exit(0)
