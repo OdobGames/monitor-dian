@@ -889,6 +889,23 @@ class Consultas:
             self.n += 1
 
 
+_motivos_vistos: set = set()
+
+
+def _motivo_recarga(motivo: str, page) -> None:
+    """Registra por que no se pudo rechequear (cada motivo una sola vez)."""
+    if motivo in _motivos_vistos:
+        return
+    _motivos_vistos.add(motivo)
+    visibles = " | ".join(_opciones_visibles(page)[:15])
+    log(f"   rechequeo: {motivo}; recargo. En pantalla: {visibles or '(nada legible)'}")
+    try:
+        (OUT_DIR / "rechequeo.html").write_text(page.content(), encoding="utf-8")
+        page.screenshot(path=str(OUT_DIR / "rechequeo.png"), full_page=True)
+    except Exception:
+        pass
+
+
 def _rechequear(page, modalidad: str, consultas: "Consultas") -> dict | None:
     """Vuelve a consultar Devoluciones sin recargar la pagina.
 
@@ -907,10 +924,12 @@ def _rechequear(page, modalidad: str, consultas: "Consultas") -> dict | None:
         try:
             page.wait_for_selector(f"text={TEXTO_SIN_CUPOS}", state="hidden", timeout=5000)
         except PWTimeout:
+            _motivo_recarga("el aviso de sin cupos no se cerro", page)
             return None
         sel_dev = _sel_devoluciones(page)
         boton = page.locator(sel_dev).first
         if not boton.count() or not boton.is_visible():
+            _motivo_recarga("tras cerrar el aviso no esta el boton Devoluciones", page)
             return None
         antes_n = consultas.n
         antes = set(_opciones_visibles(page))
