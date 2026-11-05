@@ -59,7 +59,7 @@ from pathlib import Path
 
 from playwright.sync_api import sync_playwright, TimeoutError as PWTimeout
 
-VERSION = "6.2"
+VERSION = "6.3"
 CARPETA = Path(__file__).resolve().parent
 
 
@@ -657,34 +657,38 @@ def _recorrer(page, modalidad: str, debug: bool) -> dict:
         except Exception:
             html = None
 
-        # Visto en el codigo de la pagina (2026-11-04): cuando hay cupos, en el
-        # Paso 1 aparece una lista desplegable de servicios; con "Siguiente" se
-        # pasa al Paso 2, donde otra lista trae las ciudades (seccionales) con
-        # agenda. Se recorre hasta ahi para saber si Bogota esta entre ellas.
+        # Visto en la pagina real (2026-11-05): cuando hay cupos, en el Paso 1
+        # aparece una lista desplegable de SERVICIOS y la ciudad va dentro del
+        # nombre de cada uno, por ejemplo:
+        #   Bucaramanga "Solicitud de devolucion y/o compensacion persona natural".
+        #   "Cali - Solicitud de devolucion y/o compensacion Vehiculos electricos
+        #    o Hibridos persona natural"
+        # La lista de ciudades del Paso 2 llega vacia en este flujo, asi que la
+        # decision se toma con los servicios: si alguno es de Bogota, hay cita.
         # El Paso 3 (datos, captcha y documentos) no se toca.
-        ciudades = None
-        try:
-            ciudades = _leer_ciudades(page, debug=debug, modalidad=modalidad)
-        except Exception as e:
-            log(f"   no se pudo leer la lista de ciudades ({type(e).__name__}: "
-                f"{str(e).splitlines()[0][:120] if str(e) else ''})")
-        if ciudades is not None:
-            try:
-                page.screenshot(path=str(captura), full_page=True)
-                html.write_text(page.content(), encoding="utf-8")
-            except Exception:
-                pass
-            servicio, lista = ciudades
-            en_mi_ciudad = [c for c in lista if RE_CIUDAD.search(c)]
+        servicios = _leer_servicios(page)
+        if servicios:
+            for sv in servicios:
+                sv["ciudad"] = _ciudad_de_servicio(sv["texto"])
+                sv["vehiculos"] = bool(RE_SERVICIO.search(sv["texto"]))
+            log("   servicios: " + " | ".join(sv["texto"] for sv in servicios)[:500])
+            mios = [sv for sv in servicios if RE_CIUDAD.search(sv["texto"])]
+            resumen = " | ".join(
+                f"{sv['ciudad']} ({'vehiculos electricos' if sv['vehiculos'] else 'devolucion general'})"
+                for sv in servicios)
             base = {"modalidad": modalidad, "captura": captura, "html": html,
-                    "servicio": servicio, "ciudades": lista}
-            if en_mi_ciudad:
+                    "servicios": servicios, "ciudades": [sv["ciudad"] for sv in servicios],
+                    "resumen_servicios": resumen}
+            if mios:
+                # Preferir el servicio de vehiculos electricos si hay de los dos.
+                mios.sort(key=lambda sv: not sv["vehiculos"])
+                elegido = mios[0]
                 return {**base, "estado": "hay_cupos", "seguro": True, "en_ciudad": True,
-                        "detalle": (f"[{nombre}] HAY AGENDA EN {en_mi_ciudad[0]}. "
-                                    f"Servicio: {servicio}. Ciudades: {' | '.join(lista)}")}
+                        "servicio": elegido["texto"], "servicio_valor": elegido["valor"],
+                        "detalle": (f"[{nombre}] HAY AGENDA EN {CIUDAD.upper()}: "
+                                    f"{elegido['texto']}. Todos: {resumen}")}
             return {**base, "estado": "otras_ciudades",
-                    "detalle": (f"[{nombre}] Hay agenda, pero no en {CIUDAD}: "
-                                f"{' | '.join(lista) or '(lista vacia)'}. Servicio: {servicio}")}
+                    "detalle": f"[{nombre}] Hay agenda, pero no en {CIUDAD}: {resumen}"}
 
         # Confirmacion positiva: tras el clic en Devoluciones deben aparecer
         # opciones nuevas (especialidades, sedes, fechas). Si no aparece nada
@@ -734,44 +738,42 @@ def _opciones_select(page, selector: str) -> list[dict]:
         return []
 
 
-def _leer_ciudades(page, *, debug: bool, modalidad: str) -> tuple[str, list[str]] | None:
-    """Paso 1: elige el servicio; Paso 2: lee las ciudades. None si no aplica."""
+def _leer_servicios(page) -> list[dict]:
+    """Opciones de la lista de servicios del Paso 1 (vacia si no aparece)."""
     fin = time.monotonic() + 8
     servicios = []
     while time.monotonic() < fin and not servicios:
         servicios = _opciones_select(page, SEL_SERVICIOS)
         if not servicios:
             page.wait_for_timeout(500)
-    if not servicios:
-        return None
-    elegido = next((s for s in servicios if RE_SERVICIO.search(s["texto"])), servicios[0])
-    log(f"   servicios: {' | '.join(s['texto'] for s in servicios)[:300]}")
-    log(f"   elijo servicio -> {elegido['texto'][:120]}")
-    page.locator(SEL_SERVICIOS).first.select_option(value=elegido["valor"])
-    page.wait_for_timeout(800)
-    esperar_sin_cortina(page)
-    clic(page, SEL_SIGUIENTE_1, "Siguiente (paso 1)", paso=f"05_paso2_{modalidad}",
-         debug=debug, espera=1500)
-    fin = time.monotonic() + 30
-    ciudades = []
-    while time.monotonic() < fin and not ciudades:
-        ciudades = _opciones_select(page, SEL_CIUDADES)
-        if not ciudades:
-            page.wait_for_timeout(700)
-    return elegido["texto"], [c["texto"] for c in ciudades]
+    return servicios
 
 
-def _seleccionar_ciudad(page) -> None:
-    """Modo asistido: deja escogida la ciudad buscada en el Paso 2."""
+RE_COMILLAS = "\"'“”«»"
+
+
+def _ciudad_de_servicio(texto: str) -> str:
+    """Saca la ciudad del nombre del servicio. Formatos vistos:
+    'Bucaramanga "Solicitud de ..."'  y  '"Cali - Solicitud de ..."'."""
+    t = texto.strip()
+    m = re.match(r"^\s*([^\"“”-]+?)\s*[\"“”]", t)
+    if m and m.group(1).strip():
+        return m.group(1).strip()
+    m = re.match(r"^[\s\"“”]*([^\"“”-]+?)\s*[-–]", t)
+    if m and m.group(1).strip():
+        return m.group(1).strip()
+    return t.strip(RE_COMILLAS + " .")[:40]
+
+
+def _avanzar_a_paso2(page, servicio_valor: str) -> None:
+    """Modo asistido: deja escogido el servicio de Bogota y pasa al Paso 2."""
     try:
-        ciudad = next((c for c in _opciones_select(page, SEL_CIUDADES)
-                       if RE_CIUDAD.search(c["texto"])), None)
-        if ciudad:
-            page.locator(SEL_CIUDADES).first.select_option(value=ciudad["valor"])
-            page.wait_for_timeout(800)
-            esperar_sin_cortina(page)
+        page.locator(SEL_SERVICIOS).first.select_option(value=servicio_valor)
+        page.wait_for_timeout(800)
+        esperar_sin_cortina(page)
+        clic(page, SEL_SIGUIENTE_1, "Siguiente (paso 1)", espera=1500)
     except Exception as e:
-        log(f"   no pude escoger la ciudad ({type(e).__name__}); escogela a mano")
+        log(f"   no pude avanzar al paso 2 ({type(e).__name__}); escoge el servicio a mano")
 
 
 def _traer_al_frente(page) -> None:
@@ -849,8 +851,8 @@ def revisar(modalidades: list[str], *, debug: bool = False, asistido: bool = Fal
                     if al_detectar:
                         al_detectar(r)
                     if asistido:
-                        if r.get("en_ciudad"):
-                            _seleccionar_ciudad(page)
+                        if r.get("en_ciudad") and r.get("servicio_valor"):
+                            _avanzar_a_paso2(page, r["servicio_valor"])
                         _entregar_al_usuario(page)
                         break
                 elif r["estado"] == "otras_ciudades" and al_otras:
@@ -906,8 +908,7 @@ def _manejar_cupos(r: dict) -> None:
     if r.get("en_ciudad"):
         titulo = f"🚨 CITA DIAN EN {CIUDAD.upper()} DISPONIBLE ({nombre})"
         cuerpo = ("Hay agenda en tu ciudad. Entra YA, se agotan en minutos.\n\n"
-                  f"{URL}\n\nRuta: {ruta} > servicio: {r.get('servicio', '')} > "
-                  f"ciudad: {CIUDAD}\n\n")
+                  f"{URL}\n\nRuta: {ruta} > Servicio: {r.get('servicio', '')}\n\n")
     else:
         titulo = (f"🚨 CITA DIAN DISPONIBLE ({nombre})" if seguro
                   else f"🚨 POSIBLE CITA DIAN ({nombre}), revisa ya")
@@ -929,12 +930,13 @@ def _manejar_otras(r: dict) -> None:
         return
     est = leer_estado()
     ahora = time.time()
-    lista = " | ".join(r.get("ciudades") or [])
+    lista = r.get("resumen_servicios") or " | ".join(r.get("ciudades") or [])
     # Se repite solo si cambio la lista o paso el enfriamiento.
     if (est.get("otras_lista") == lista
             and ahora - est.get("otras_aviso", 0) < COOLDOWN_OTRAS_MIN * 60):
         return
-    avisar(f"Cupos DIAN solo en otras ciudades (no {CIUDAD})",
+    ciudades = ", ".join(dict.fromkeys(r.get("ciudades") or [])) or "otras ciudades"
+    avisar(f"Cupos DIAN en {ciudades} (no {CIUDAD})",
            f"Hay agenda en: {lista or '(no se leyo la lista)'}.\n"
            f"En {CIUDAD} no hay por ahora. No tienes que hacer nada; si aparece "
            f"{CIUDAD} te llega el aviso urgente.",
