@@ -59,7 +59,7 @@ from pathlib import Path
 
 from playwright.sync_api import sync_playwright, TimeoutError as PWTimeout
 
-VERSION = "6.5"
+VERSION = "6.6"
 CARPETA = Path(__file__).resolve().parent
 
 
@@ -400,15 +400,18 @@ def _multipart(campos: dict, archivo: tuple[str, str, bytes] | None) -> tuple[by
 def _aviso_ntfy(titulo, texto, captura, urgente):
     if not NTFY_TOPIC:
         return None
+    # "#auto": el script dian-rapido.user.js del celular arranca solo la ruta
+    # hasta la cita de Bogota al abrir la pagina desde la alerta.
+    enlace = URL.split("#")[0] + ("#auto" if urgente else "")
     cuerpo = {
         "topic": NTFY_TOPIC,
         "title": titulo,
         "message": texto,
         "priority": 5 if urgente else 2,
         "tags": ["rotating_light"] if urgente else ["white_check_mark"],
-        "click": URL,
+        "click": enlace,
         "actions": [{"action": "view", "label": "Abrir agendamiento DIAN",
-                     "url": URL, "clear": True}],
+                     "url": enlace, "clear": True}],
     }
     st, resp = _http(NTFY_SERVER, datos=json.dumps(cuerpo).encode(),
                      cabeceras={"Content-Type": "application/json"}, metodo="POST")

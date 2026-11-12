@@ -121,6 +121,30 @@ El navegador trabaja fuera de la pantalla. Cuando hay cupos:
 Cuando cierras esa ventana, sigue vigilando. Si no estabas y nadie la cierra, a
 los 20 minutos la cierra sola y sigue.
 
+### En el celular (script "Cita rápida", `dian-rapido.user.js`)
+
+Un script que corre dentro del navegador del celular. Al tocar la alerta de
+ntfy de Bogotá (el enlace termina en `#auto`), o el botón ⚡ del panel, hace
+solo: Agendar cita > Persona Natural > Videoatención > Devoluciones > servicio
+de Bogotá (prefiere el de vehículos eléctricos) > Siguiente > ciudad > sede >
+primera fecha > primera hora > Siguiente. Si no hay cupo, reintenta 3 minutos.
+En el paso 3 espera a que marques "No soy un robot" y escribe la cédula.
+
+No toca el captcha, no adjunta archivos (el navegador no lo permite), no acepta
+la política de datos ni confirma: eso lo hace la persona.
+
+Instalación:
+
+- **Android**: Firefox (como navegador predeterminado, para que la alerta abra
+  ahí) + complemento Tampermonkey. Abrir
+  `https://raw.githubusercontent.com/OdobGames/monitor-dian/main/dian-rapido.user.js`
+  e instalar.
+- **iPhone**: app Userscripts (gratis) activada en Safari; guardar el mismo
+  archivo en la carpeta de la app.
+
+La primera vez, en la página de la DIAN, botón ⚙ para guardar cédula, nombre,
+celular y correo. Quedan solo en ese navegador.
+
 ### En una VM propia
 
 Igual que antes (`subir-a-vm.ps1` y `vm/install.sh`). Ahora el temporizador
@@ -128,12 +152,9 @@ dispara cada 3 minutos. Los datos de avisos van en `/opt/dian/dian.env`.
 
 ## Por qué no reserva la cita solo
 
-Nunca hemos visto las pantallas que vienen después de "Devoluciones" cuando sí
-hay cupos: con cupos en cero la página no las muestra. Automatizar a ciegas
-podría reservar la modalidad o sede equivocada. Por eso, cuando haya cupos, el
-monitor guarda el HTML de esa pantalla (`salida/cupos_*.html`, y en GitHub en
-**Artifacts**). Con ese archivo se puede programar la reserva completa para la
-siguiente vez.
+El paso 3 tiene un reCAPTCHA ("No soy un robot") que verifica que quien agenda
+es una persona; ninguna parte de este repositorio lo toca. El script del
+celular llega hasta ahí y la persona termina.
 
 ## Configuración
 
