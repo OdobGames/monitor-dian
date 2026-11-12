@@ -59,7 +59,7 @@ from pathlib import Path
 
 from playwright.sync_api import sync_playwright, TimeoutError as PWTimeout
 
-VERSION = "6.6"
+VERSION = "6.7"
 CARPETA = Path(__file__).resolve().parent
 
 
@@ -1079,7 +1079,12 @@ def _manejar_cupos(r: dict) -> None:
         log("   cupos siguen visibles; aviso ya enviado hace poco")
         return
     if r.get("en_ciudad"):
-        titulo = f"🚨 CITA DIAN EN {CIUDAD.upper()} DISPONIBLE ({nombre})"
+        # Solo el primer aviso de la racha dice "EN <CIUDAD> DISPONIBLE": la
+        # macro del celular que abre la pagina sola busca ese texto, y asi no
+        # abre otra pestana encima cada 60 s mientras la persona agenda.
+        titulo = (f"🔁 Sigue la cita DIAN en {CIUDAD} ({nombre})"
+                  if est.get("racha_avisos", 0) > 1
+                  else f"🚨 CITA DIAN EN {CIUDAD.upper()} DISPONIBLE ({nombre})")
         cuerpo = ("Hay agenda en tu ciudad. Entra YA, se agotan en minutos.\n\n"
                   f"{URL}\n\nRuta: {ruta} > Servicio: {r.get('servicio', '')}\n\n")
     else:
