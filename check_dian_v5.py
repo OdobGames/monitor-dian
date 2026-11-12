@@ -59,7 +59,7 @@ from pathlib import Path
 
 from playwright.sync_api import sync_playwright, TimeoutError as PWTimeout
 
-VERSION = "6.4"
+VERSION = "6.5"
 CARPETA = Path(__file__).resolve().parent
 
 
@@ -906,6 +906,43 @@ def _motivo_recarga(motivo: str, page) -> None:
         pass
 
 
+def _visible(page, sel: str) -> bool:
+    loc = page.locator(sel).first
+    try:
+        return loc.count() > 0 and loc.is_visible()
+    except Exception:
+        return False
+
+
+def _ir_a_devoluciones(page, modalidad: str) -> bool:
+    """Sin recargar, avanza desde donde este la pagina hasta ver Devoluciones.
+
+    Ruta: Agendar cita > Persona Natural > modalidad > (lista de categorias).
+    Empieza por el paso mas avanzado que este en pantalla y en cada clic espera
+    a que aparezca el siguiente, en vez de pausas fijas.
+    """
+    sel_per = 'div.btnTipoPersona[llave="1"]'
+    sel_mod = f'div.btnTipoAtencion[llave="{LLAVE_MODALIDAD[modalidad]}"]'
+    cadena = ((sel_mod, "div.btnCategoria"), (sel_per, sel_mod), (SEL_AGENDAR, sel_per))
+    for _ in range(4):
+        if _visible(page, _sel_devoluciones(page)):
+            return True
+        for sel, siguiente in cadena:
+            if _visible(page, sel):
+                page.locator(sel).first.click(force=True)
+                page.wait_for_timeout(300)
+                esperar_sin_cortina(page)
+                try:
+                    page.locator(siguiente).first.wait_for(state="visible", timeout=10000)
+                except PWTimeout:
+                    return False
+                page.wait_for_timeout(500)
+                break
+        else:
+            return False
+    return _visible(page, _sel_devoluciones(page))
+
+
 def _rechequear(page, modalidad: str, consultas: "Consultas") -> dict | None:
     """Vuelve a consultar Devoluciones sin recargar la pagina.
 
@@ -926,11 +963,13 @@ def _rechequear(page, modalidad: str, consultas: "Consultas") -> dict | None:
         except PWTimeout:
             _motivo_recarga("el aviso de sin cupos no se cerro", page)
             return None
-        sel_dev = _sel_devoluciones(page)
-        boton = page.locator(sel_dev).first
-        if not boton.count() or not boton.is_visible():
-            _motivo_recarga("tras cerrar el aviso no esta el boton Devoluciones", page)
+        # Visto el 2026-11-06: al cerrar el aviso la pagina vuelve a la
+        # pantalla de inicio (Agendar / Gestionar cita). Antes eso forzaba una
+        # recarga completa (~20 s); ahora se rehace la ruta sin recargar.
+        if not _ir_a_devoluciones(page, modalidad):
+            _motivo_recarga("no se pudo volver a Devoluciones sin recargar", page)
             return None
+        boton = page.locator(_sel_devoluciones(page)).first
         antes_n = consultas.n
         antes = set(_opciones_visibles(page))
         boton.click(force=True)
@@ -1086,9 +1125,10 @@ def _latido(revisiones: int) -> None:
     hoy = f"{datetime.now():%Y-%m-%d}"
     if est.get("latido") == hoy:
         return
+    cada = f"{RAPIDO_SEG} s" if RAPIDO_SEG > 0 else f"{INTERVALO_SEG // 60} min"
     avisar("Monitor DIAN activo",
            f"Sigue vigilando ({', '.join(modalidades_configuradas())}) cada "
-           f"{INTERVALO_SEG // 60} min entre las {HORA_INICIO}:00 y las {HORA_FIN}:00. "
+           f"{cada} entre las {HORA_INICIO}:00 y las {HORA_FIN}:00. "
            "Este es el aviso diario de que esta vivo.",
            urgente=False, solo=("ntfy", "telegram"))
     est["latido"] = hoy

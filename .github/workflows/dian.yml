@@ -44,10 +44,10 @@ jobs:
       TZ: America/Bogota
       DIAN_MODALIDAD: ambas
       DIAN_INTERVALO_SEG: "180"
-      # Modo rapido: la pagina queda abierta y consulta Devoluciones cada 20 s,
-      # con recarga completa cada 5 min. Presencial (que no tiene Devoluciones)
-      # se revisa cada 30 min por si un dia la agregan.
-      DIAN_RAPIDO_SEG: "20"
+      # Modo rapido: la pagina queda abierta y consulta Devoluciones cada 10 s
+      # sin recargar (v6.5), con recarga completa cada 5 min. Presencial (que no
+      # tiene Devoluciones) se revisa cada 30 min por si un dia la agregan.
+      DIAN_RAPIDO_SEG: "10"
       DIAN_RECARGA_MIN: "5"
       DIAN_PRESENCIAL_CADA_MIN: "30"
       DIAN_HORA_INICIO: "5"
