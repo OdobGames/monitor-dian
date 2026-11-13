@@ -59,7 +59,7 @@ from pathlib import Path
 
 from playwright.sync_api import sync_playwright, TimeoutError as PWTimeout
 
-VERSION = "6.8"
+VERSION = "6.9"
 CARPETA = Path(__file__).resolve().parent
 
 
@@ -108,6 +108,9 @@ TWILIO_FROM = _env("DIAN_TWILIO_FROM")
 TWILIO_TO = _env("DIAN_TWILIO_TO")
 
 # WhatsApp (CallMeBot, gratis para uso personal, no es servicio oficial).
+# Webhook de MacroDroid (disparador "Webhook (URL)"): enciende la pantalla y
+# abre la pagina en el celular. Solo con el primer aviso de cada cupo.
+MACRODROID_URL = _env("DIAN_MACRODROID_URL")
 WHATSAPP_PHONE = _env("DIAN_WHATSAPP_PHONE")
 WHATSAPP_APIKEY = _env("DIAN_WHATSAPP_APIKEY")
 
@@ -492,7 +495,19 @@ def _aviso_correo(titulo, texto, captura, urgente):
     return True, f"-> {CORREO_DESTINO}"
 
 
+def _aviso_macrodroid(titulo, texto, captura, urgente):
+    """Llama el webhook de MacroDroid. Solo para el primer aviso urgente de la
+    racha (el que dice DISPONIBLE): asi no abre otra pestana cada minuto."""
+    if not MACRODROID_URL or not urgente or "DISPONIBLE" not in titulo:
+        return None
+    sep = "&" if "?" in MACRODROID_URL else "?"
+    url = MACRODROID_URL + sep + urllib.parse.urlencode({"titulo": titulo[:120]})
+    estado, cuerpo = _http(url, timeout=15)
+    return 200 <= estado < 300, f"HTTP {estado} {cuerpo[:80]}"
+
+
 CANALES = {
+    "macrodroid": _aviso_macrodroid,
     "ntfy": _aviso_ntfy,
     "telegram": _aviso_telegram,
     "whatsapp": _aviso_whatsapp,
@@ -503,6 +518,7 @@ CANALES = {
 
 def canales_configurados() -> list[str]:
     return [n for n, ok in (
+        ("macrodroid", MACRODROID_URL),
         ("ntfy", NTFY_TOPIC),
         ("telegram", TELEGRAM_TOKEN and TELEGRAM_CHAT_ID),
         ("whatsapp", WHATSAPP_PHONE and WHATSAPP_APIKEY),

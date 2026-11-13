@@ -54,6 +54,7 @@ jobs:
       DIAN_HORA_FIN: "21"
       # Avisos: cada canal es opcional; el que no tenga sus secretos, no se usa.
       DIAN_NTFY_TOPIC: ${{ secrets.DIAN_NTFY_TOPIC }}
+      DIAN_MACRODROID_URL: ${{ secrets.DIAN_MACRODROID_URL }}
       DIAN_TELEGRAM_TOKEN: ${{ secrets.DIAN_TELEGRAM_TOKEN }}
       DIAN_TELEGRAM_CHAT_ID: ${{ secrets.DIAN_TELEGRAM_CHAT_ID }}
       DIAN_TWILIO_SID: ${{ secrets.DIAN_TWILIO_SID }}

@@ -1,8 +1,9 @@
-name: Alerta de prueba (ntfy)
+name: Alerta de prueba (ntfy y MacroDroid)
 
-# Manda a ntfy una alerta igual a la urgente de Bogota, para probar la macro
-# del celular. No toca la pagina de la DIAN. Va en su propio grupo de
-# concurrencia, asi que corre aunque el monitor este activo.
+# Manda una alerta igual a la urgente de Bogota, para probar el celular:
+# notificacion de ntfy y, si esta configurado, el webhook de MacroDroid
+# (enciende la pantalla y abre la pagina). No toca la pagina de la DIAN. Va en
+# su propio grupo de concurrencia, asi que corre aunque el monitor este activo.
 
 on:
   workflow_dispatch:
@@ -23,6 +24,14 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 3
     steps:
+      - name: Webhook de MacroDroid
+        env:
+          URL: ${{ secrets.DIAN_MACRODROID_URL }}
+          TITULO: ${{ inputs.titulo }}
+        run: |
+          if [ -z "$URL" ]; then echo "sin webhook de MacroDroid configurado"; exit 0; fi
+          curl -sS --fail -G --data-urlencode "titulo=$TITULO" "$URL" -o /dev/null -w "MacroDroid: HTTP %{http_code}\n"
+
       - name: Enviar a ntfy
         env:
           TOPIC: ${{ secrets.DIAN_NTFY_TOPIC }}
