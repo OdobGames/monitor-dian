@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         DIAN cita rapida
 // @namespace    https://github.com/OdobGames/monitor-dian
-// @version      1.0.0
+// @version      1.1.0
 // @description  Agendamiento DIAN: hace sola la ruta hasta la cita de Bogota y llena la cedula. El captcha, los archivos y la confirmacion los haces tu.
 // @match        https://agendamiento.dian.gov.co/*
 // @run-at       document-idle
@@ -31,7 +31,7 @@
   'use strict';
   if (window.top !== window.self) return; // no correr dentro del captcha
 
-  const VERSION = '1.0.0';
+  const VERSION = '1.1.0';
   const CLAVE_CFG = 'dianRapidoCfg';
   const CLAVE_RONDA = 'dianRapidoRonda';
   const SIN_CUPOS = 'No se encontraron especialidades';
@@ -239,9 +239,20 @@
           const ops = opciones(sel);
           const bog = ops.filter((o) => reCiudad().test(o.text));
           if (bog.length) {
-            fijarRonda(null);
             const o = bog.find((x) => /el[eé]ctric|h[ií]brid/i.test(x.text)) || bog[0];
-            return await agendar(sel, o);
+            const fin = await agendar(sel, o);
+            // A veces Bogota sale en la lista pero el paso 2 llega sin fechas:
+            // no es un cupo real, se sigue buscando.
+            if (fin === 'sin_fechas' && !detenido && Date.now() < r.fin) {
+              estado('Bogotá salió en la lista pero sin fechas. Sigo buscando…');
+              await dormir(800);
+              return recargar(r);
+            }
+            if (fin === 'sin_fechas' && !detenido) {
+              estado('Bogotá salió en la lista pero sin fechas. Toca ⚡ para buscar otra vez.', 'error');
+            }
+            fijarRonda(null);
+            return;
           }
           estado(`Hay cupos en ${[...new Set(ops.map((o) => ciudadDe(o.text)))].join(', ')}, ` +
             'no en Bogotá. Reintento…');
@@ -294,13 +305,13 @@
 
     // Paso 2: ciudad, sede, fecha, hora
     const ciu = await esperar(selectConOpciones(S.ciudad), 15000);
-    if (!ciu) return manual('escoge ciudad, sede, fecha y hora.');
+    if (!ciu) return 'sin_fechas';
     const oc = opciones(ciu);
     elegir(ciu, (oc.find((o) => reCiudad().test(o.text)) || oc[0]).value);
     await dormir(300); await quieto();
 
     const sede = await esperar(selectConOpciones(S.sede), 15000);
-    if (!sede) return manual('escoge sede, fecha y hora.');
+    if (!sede) return 'sin_fechas';
     elegir(sede, opciones(sede)[0].value);
     await dormir(300); await quieto();
 
@@ -313,7 +324,7 @@
       const sig = cal && cal.querySelector('.k-nav-next, .k-calendar-nav-next');
       if (sig) { clic(sig); dia = await esperar(primerDia, 4000); }
     }
-    if (!dia) return manual('escoge fecha y hora.');
+    if (!dia) return 'sin_fechas';
     await clicYEspera(dia.querySelector('a, .k-link') || dia);
 
     const hora = await esperar(selectConOpciones(S.hora), 15000);
