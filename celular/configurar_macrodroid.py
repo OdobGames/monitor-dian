@@ -151,8 +151,22 @@ def aplicar(pasos) -> list[str]:
     for nombre, cmd in pasos:
         codigo, out = sh(cmd)
         bien = ok(codigo, out)
-        print(f"  [{'OK' if bien else 'NO'}] {nombre}" + ("" if bien else f"  ({out[:90]})"))
-        if not bien:
+        marca = "OK" if bien else "NO"
+        # Los permisos de Xiaomi a veces responden sin error pero no se aplican:
+        # se leen de vuelta para confirmar.
+        m = re.match(rf"appops set {re.escape(PAQUETE)} (\d{{5}}) allow", cmd)
+        if bien and m:
+            _, leido = sh(f"appops get {PAQUETE} {m.group(1)}")
+            if re.search(r"(?i)\ballow", leido):
+                marca = "OK"
+            elif re.search(r"(?i)deny|ignore|default|foreground", leido):
+                marca, bien = "NO", False
+                out = f"el sistema lo dejo en: {leido[:60]}"
+            else:
+                marca = "??"
+                out = "no se pudo confirmar; revisalo a mano"
+        print(f"  [{marca}] {nombre}" + ("" if marca == "OK" else f"  ({out[:90]})"))
+        if marca != "OK":
             fallidos.append(nombre)
     return fallidos
 
