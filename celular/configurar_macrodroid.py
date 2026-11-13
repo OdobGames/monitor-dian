@@ -10,7 +10,9 @@ Que hace, por ADB:
   4. En Xiaomi intenta dar "ventanas en segundo plano", "pantalla de bloqueo"
      e "inicio automatico". Si el sistema no lo deja, abre esas pantallas para
      que actives el interruptor a mano.
-  5. Con --webhook: apaga la pantalla, llama el webhook y revisa si se prendio
+  5. Activa el servicio de accesibilidad "Interaccion UI" de MacroDroid (el que
+     pide la accion de desbloquear con PIN), sin apagar otros que tengas.
+  6. Con --webhook: apaga la pantalla, llama el webhook y revisa si se prendio
      la pantalla y se abrio el navegador.
 
 Antes, en el celular:
@@ -167,6 +169,61 @@ def abrir_pantallas_xiaomi() -> None:
         input("     Cuando lo actives en el celular, presiona Enter aqui...")
 
 
+ACCION_ACCESIBILIDAD = "android.accessibilityservice.AccessibilityService"
+
+
+def servicios_accesibilidad() -> list[str]:
+    """Servicios de accesibilidad de MacroDroid (componentes paquete/clase)."""
+    _, out = sh(f"cmd package query-services --components -a {ACCION_ACCESIBILIDAD}")
+    comps = [l.strip() for l in out.splitlines() if l.strip().startswith(PAQUETE + "/")]
+    if comps:
+        return comps
+    # Android viejo: buscar en la tabla de servicios de dumpsys package
+    _, out = sh(f"dumpsys package {PAQUETE}")
+    lineas = out.splitlines()
+    for i, l in enumerate(lineas):
+        if l.strip() == ACCION_ACCESIBILIDAD + ":":
+            sangria = len(l) - len(l.lstrip())
+            for sig in lineas[i + 1:]:
+                if sig.strip() and len(sig) - len(sig.lstrip()) <= sangria:
+                    break
+                m = re.search(rf"({re.escape(PAQUETE)}/[\w.$]+)", sig)
+                if m and m.group(1) not in comps:
+                    comps.append(m.group(1))
+    return comps
+
+
+def activar_accesibilidad() -> bool:
+    """Prende el servicio de 'Interaccion UI' de MacroDroid (el que usa la accion de
+    desbloquear con PIN), sin apagar los servicios que ya tengas activos."""
+    print("\nAccesibilidad de MacroDroid (Interaccion UI):")
+    comps = servicios_accesibilidad()
+    if not comps:
+        print("  [NO] No encontre servicios de accesibilidad de MacroDroid. Abre la accion de "
+              "desbloqueo en MacroDroid una vez (para que los registre) y repite.")
+        return False
+    ui = [c for c in comps if re.search(r"(?i)ui.?interaction|uiinteract", c)]
+    elegidos = ui or comps
+    print("  Servicios de MacroDroid: " + ", ".join(c.split("/")[-1] for c in comps))
+    _, actual = sh("settings get secure enabled_accessibility_services")
+    actual = "" if actual.strip() in ("", "null") else actual.strip()
+    lista = [c for c in actual.split(":") if c]
+    for c in elegidos:
+        if c not in lista:
+            lista.append(c)
+    codigo, out = sh(f"settings put secure enabled_accessibility_services '{':'.join(lista)}'")
+    codigo2, out2 = sh("settings put secure accessibility_enabled 1")
+    _, despues = sh("settings get secure enabled_accessibility_services")
+    bien = all(c in despues for c in elegidos)
+    print(f"  [{'OK' if bien else 'NO'}] Activado: " + ", ".join(c.split("/")[-1] for c in elegidos))
+    if not bien:
+        print(f"      ({(out or out2)[:120]})")
+        print("      En Xiaomi activa 'Depuracion USB (configuracion de seguridad)' en Opciones de "
+              "desarrollador y repite. Si en Ajustes el servicio sale gris: Ajustes > Apps > "
+              "MacroDroid > menu (3 puntos) > 'Permitir ajustes restringidos'.")
+    return bien
+
+
 def probar(webhook: str) -> None:
     print("\nPrueba: apago la pantalla, llamo el webhook y reviso el celular.")
     codigo, out = sh("input keyevent 223")
@@ -205,6 +262,8 @@ def main() -> None:
     p.add_argument("--emparejar", metavar="IP:PUERTO", help="depuracion inalambrica: emparejar")
     p.add_argument("--codigo", help="codigo de emparejamiento de la depuracion inalambrica")
     p.add_argument("--conectar", metavar="IP:PUERTO", help="depuracion inalambrica: conectar")
+    p.add_argument("--sin-accesibilidad", action="store_true",
+                   help="no activar el servicio de accesibilidad (Interaccion UI) de MacroDroid")
     a = p.parse_args()
 
     global ADB
@@ -228,6 +287,8 @@ def main() -> None:
             abrir_pantallas_xiaomi()
         print("\nUltimo paso manual: abre las apps recientes, manten presionada MacroDroid y toca "
               "el candado, para que 'limpiar todo' no la cierre.")
+    if not a.sin_accesibilidad:
+        activar_accesibilidad()
     if a.webhook:
         probar(a.webhook)
     else:
