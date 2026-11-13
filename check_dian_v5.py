@@ -59,7 +59,7 @@ from pathlib import Path
 
 from playwright.sync_api import sync_playwright, TimeoutError as PWTimeout
 
-VERSION = "6.7"
+VERSION = "6.8"
 CARPETA = Path(__file__).resolve().parent
 
 
@@ -132,6 +132,11 @@ CIUDAD = _env("DIAN_CIUDAD", "Bogota")
 RE_CIUDAD = re.compile(re.escape(CIUDAD[:5]).replace("o", "[oó]"), re.I)
 AVISAR_OTRAS = _env("DIAN_AVISAR_OTRAS", "1") not in ("0", "no", "false", "")
 COOLDOWN_OTRAS_MIN = int(_env("DIAN_COOLDOWN_OTRAS_MIN", "120"))
+# v6.8: antes de la alerta urgente, entrar al Paso 2 y confirmar que hay
+# ciudad, sede y dias. Si el Paso 2 carga vacio, no es un cupo real.
+VERIFICAR_PASO2 = _env("DIAN_VERIFICAR_PASO2", "1") not in ("0", "no", "false", "")
+ESPERA_PASO2_SEG = float(_env("DIAN_ESPERA_PASO2_SEG", "8"))
+COOLDOWN_SIN_FECHAS_MIN = int(_env("DIAN_COOLDOWN_SIN_FECHAS_MIN", "30"))
 
 # Navegador: por defecto el Chromium de Playwright. En Windows se puede usar el
 # Edge o el Chrome ya instalados con DIAN_NAVEGADOR_CANAL=msedge o chrome.
@@ -717,10 +722,24 @@ def _evaluar(page, modalidad: str, antes: set, *, captura_siempre: bool) -> dict
                 # Preferir el servicio de vehiculos electricos si hay de los dos.
                 mios.sort(key=lambda sv: not sv["vehiculos"])
                 elegido = mios[0]
+                # v6.8: que el servicio salga en la lista no garantiza fechas.
+                # Antes de la alerta urgente se entra al Paso 2 y se mira si
+                # trae ciudad, sede y dias habilitados.
+                v = _verificar_paso2(page, elegido["valor"]) if VERIFICAR_PASO2 else None
+                confirmado = _paso2_confirma(v)
+                if confirmado is False:
+                    return {**base, "estado": "otras_ciudades", "bogota_sin_fechas": True,
+                            "paso2": v, "servicio": elegido["texto"],
+                            "detalle": (f"[{nombre}] {CIUDAD} aparece en la lista pero el "
+                                        f"Paso 2 no trae agenda ({_resumen_paso2(v)}). "
+                                        f"Todos: {resumen}")}
+                nota = (f" Paso 2: {_resumen_paso2(v)}." if confirmado
+                        else " (Paso 2 sin verificar.)" if VERIFICAR_PASO2 else "")
                 return {**base, "estado": "hay_cupos", "seguro": True, "en_ciudad": True,
                         "servicio": elegido["texto"], "servicio_valor": elegido["valor"],
+                        "paso2": v,
                         "detalle": (f"[{nombre}] HAY AGENDA EN {CIUDAD.upper()}: "
-                                    f"{elegido['texto']}. Todos: {resumen}")}
+                                    f"{elegido['texto']}.{nota} Todos: {resumen}")}
             return {**base, "estado": "otras_ciudades",
                     "detalle": f"[{nombre}] Hay agenda, pero no en {CIUDAD}: {resumen}"}
 
@@ -804,8 +823,111 @@ def _ciudad_de_servicio(texto: str) -> str:
     return t.strip(RE_COMILLAS + " .")[:40]
 
 
+SEL_SEDES = 'div[contenido="Sede"] select'
+SEL_PASO2 = 'div[contenido="Ciudad"]'
+SEL_BTN_FECHA = 'div[pantalla="PasoDos"][nombre="btnFecha"]'
+SEL_CALENDARIO = 'div[pantalla="PasoDos"][nombre="Calendario"]'
+JS_DIAS = """sel => { const c = document.querySelector(sel); if (!c) return null;
+  return Array.from(c.querySelectorAll('td')).filter(td =>
+      (td.classList.contains('k-calendar-td') || td.getAttribute('role') === 'gridcell') &&
+      !td.classList.contains('k-disabled') && !td.classList.contains('k-state-disabled') &&
+      td.textContent.trim())
+    .map(td => td.getAttribute('data-value') || td.getAttribute('title') || td.textContent.trim()); }"""
+
+
+def _esperar_opciones(page, selector: str, segundos: float) -> list[dict]:
+    fin = time.monotonic() + segundos
+    ops = _opciones_select(page, selector)
+    while not ops and time.monotonic() < fin:
+        page.wait_for_timeout(400)
+        ops = _opciones_select(page, selector)
+    return ops
+
+
+def _verificar_paso2(page, servicio_valor: str) -> dict:
+    """Escoge el servicio, pasa al Paso 2 y mira si de verdad hay agenda:
+    ciudades, sedes y dias habilitados en el calendario. No pasa del Paso 2
+    (no toca hora, datos, captcha ni confirmacion). Deja captura y HTML."""
+    v = {"llego": False, "ciudades": [], "sedes": [], "dias": None, "error": None}
+    t0 = time.monotonic()
+    try:
+        page.locator(SEL_SERVICIOS).first.select_option(value=servicio_valor)
+        page.wait_for_timeout(400)
+        esperar_sin_cortina(page)
+        sig = page.locator(SEL_SIGUIENTE_1).first
+        sig.wait_for(state="visible", timeout=5000)
+        sig.click(force=True)
+        page.wait_for_timeout(300)
+        esperar_sin_cortina(page)
+        page.locator(SEL_PASO2).first.wait_for(state="visible", timeout=10000)
+        v["llego"] = True
+        v["ciudades"] = _esperar_opciones(page, SEL_CIUDADES, ESPERA_PASO2_SEG)
+        if v["ciudades"]:
+            ciu = next((c for c in v["ciudades"] if RE_CIUDAD.search(c["texto"])),
+                       v["ciudades"][0])
+            page.locator(SEL_CIUDADES).first.select_option(value=ciu["valor"])
+            page.wait_for_timeout(300)
+            esperar_sin_cortina(page)
+            v["sedes"] = _esperar_opciones(page, SEL_SEDES, ESPERA_PASO2_SEG)
+            if v["sedes"]:
+                page.locator(SEL_SEDES).first.select_option(value=v["sedes"][0]["valor"])
+                page.wait_for_timeout(300)
+                esperar_sin_cortina(page)
+                btn = page.locator(SEL_BTN_FECHA).first
+                try:
+                    btn.wait_for(state="visible", timeout=6000)
+                    if not page.locator(".calendario.calendario-open").count():
+                        btn.click(force=True)
+                        page.wait_for_timeout(800)
+                    v["dias"] = page.evaluate(JS_DIAS, SEL_CALENDARIO)
+                except PWTimeout:
+                    pass
+    except Exception as e:
+        primera = str(e).splitlines()[0][:120] if str(e) else ""
+        v["error"] = f"{type(e).__name__}: {primera}"
+    v["segundos"] = round(time.monotonic() - t0, 1)
+    sello = f"{datetime.now():%Y%m%d_%H%M%S}"
+    try:
+        page.screenshot(path=str(OUT_DIR / f"paso2_{sello}.png"), full_page=True)
+        (OUT_DIR / f"paso2_{sello}.html").write_text(page.content(), encoding="utf-8")
+    except Exception:
+        pass
+    log(f"   paso 2 ({v['segundos']} s): {_resumen_paso2(v)}")
+    return v
+
+
+def _paso2_confirma(v: dict | None) -> bool | None:
+    """True: hay agenda. False: el Paso 2 cargo y no trae agenda.
+    None: no se pudo verificar (se avisa igual, para no perder un cupo real)."""
+    if not v or not v.get("llego"):
+        return None
+    if not v["ciudades"] or not v["sedes"]:
+        return False
+    if v["dias"] is not None and not v["dias"]:
+        return False
+    return True
+
+
+def _resumen_paso2(v: dict | None) -> str:
+    if not v:
+        return "sin verificar"
+    if not v.get("llego"):
+        return f"no se pudo entrar ({v.get('error') or 'sin detalle'})"
+    partes = [f"ciudades: {', '.join(c['texto'] for c in v['ciudades']) or 'ninguna'}"]
+    if v["ciudades"]:
+        partes.append(f"sedes: {', '.join(s['texto'] for s in v['sedes']) or 'ninguna'}")
+    if v["sedes"]:
+        partes.append("dias: " + ("no se leyo el calendario" if v["dias"] is None
+                                  else (", ".join(v["dias"][:5]) or "ninguno")))
+    if v.get("error"):
+        partes.append(f"error: {v['error']}")
+    return "; ".join(partes)
+
+
 def _avanzar_a_paso2(page, servicio_valor: str) -> None:
     """Modo asistido: deja escogido el servicio de Bogota y pasa al Paso 2."""
+    if page.locator(SEL_PASO2).first.is_visible():
+        return  # ya quedo ahi por la verificacion
     try:
         page.locator(SEL_SERVICIOS).first.select_option(value=servicio_valor)
         page.wait_for_timeout(800)
@@ -1108,17 +1230,30 @@ def _manejar_otras(r: dict) -> None:
         return
     est = leer_estado()
     ahora = time.time()
+    if r.get("bogota_sin_fechas"):
+        # Aviso silencioso y como mucho uno cada 30 min: sirve para saber que
+        # paso, sin hacer correr a nadie.
+        if ahora - est.get("sinfechas_aviso", 0) < COOLDOWN_SIN_FECHAS_MIN * 60:
+            return
+        est["sinfechas_aviso"] = ahora
+        guardar_estado(est)
     lista = r.get("resumen_servicios") or " | ".join(r.get("ciudades") or [])
     # Se repite solo si cambio la lista o paso el enfriamiento.
-    if (est.get("otras_lista") == lista
+    if not r.get("bogota_sin_fechas") and (est.get("otras_lista") == lista
             and ahora - est.get("otras_aviso", 0) < COOLDOWN_OTRAS_MIN * 60):
         return
     ciudades = ", ".join(dict.fromkeys(r.get("ciudades") or [])) or "otras ciudades"
-    avisar(f"Cupos DIAN en {ciudades} (no {CIUDAD})",
-           f"Hay agenda en: {lista or '(no se leyo la lista)'}.\n"
-           f"En {CIUDAD} no hay por ahora. No tienes que hacer nada; si aparece "
-           f"{CIUDAD} te llega el aviso urgente.",
-           urgente=False, solo=("ntfy", "telegram"))
+    if r.get("bogota_sin_fechas"):
+        titulo = f"{CIUDAD} sale en la lista pero sin fechas (no entres)"
+        cuerpo = (f"El servicio de {CIUDAD} aparece en la lista, pero al entrar al "
+                  f"paso 2 no trae agenda: {_resumen_paso2(r.get('paso2'))}.\n"
+                  "No es un cupo real. Si se abre uno de verdad te llega el aviso urgente.")
+    else:
+        titulo = f"Cupos DIAN en {ciudades} (no {CIUDAD})"
+        cuerpo = (f"Hay agenda en: {lista or '(no se leyo la lista)'}.\n"
+                  f"En {CIUDAD} no hay por ahora. No tienes que hacer nada; si aparece "
+                  f"{CIUDAD} te llega el aviso urgente.")
+    avisar(titulo, cuerpo, urgente=False, solo=("ntfy", "telegram"))
     est["otras_lista"] = lista
     est["otras_aviso"] = ahora
     guardar_estado(est)
