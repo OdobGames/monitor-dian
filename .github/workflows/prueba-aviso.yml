@@ -1,0 +1,36 @@
+name: Alerta de prueba (ntfy)
+
+# Manda a ntfy una alerta igual a la urgente de Bogota, para probar la macro
+# del celular. No toca la pagina de la DIAN. Va en su propio grupo de
+# concurrencia, asi que corre aunque el monitor este activo.
+
+on:
+  workflow_dispatch:
+    inputs:
+      titulo:
+        description: "Titulo de la alerta"
+        default: "PRUEBA CITA DIAN EN BOGOTA DISPONIBLE"
+
+concurrency:
+  group: prueba-aviso
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  enviar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Enviar a ntfy
+        env:
+          TOPIC: ${{ secrets.DIAN_NTFY_TOPIC }}
+          TITULO: ${{ inputs.titulo }}
+        run: |
+          [ -n "$TOPIC" ] || { echo "::error::falta el secreto DIAN_NTFY_TOPIC"; exit 1; }
+          curl -sS --fail -H "Content-Type: application/json" -d "$(jq -n \
+            --arg topic "$TOPIC" --arg title "$TITULO" \
+            '{topic:$topic, title:$title, message:("Alerta de prueba: " + $title + ". No es un cupo real."),
+              priority:5, tags:["rotating_light"], click:"https://agendamiento.dian.gov.co/#auto"}')" \
+            https://ntfy.sh/ | jq -c '{id, time, title}'
